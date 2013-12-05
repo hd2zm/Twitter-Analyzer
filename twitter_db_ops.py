@@ -7,11 +7,12 @@ class DbOps:
     def __init__(self, path):
         # Connect to the database. Name should be preceeded with a . so its a hidden file
         if not path:
-            self.path = os.path.join(str(os.getenv("HOME")), "OneDir")
+            #self.path = os.path.join(str(os.getenv("HOME")), "OneDir")
+            pass
         else:
             self.path = path
-        db_path = os.path.join(self.path, '.oneDir.db')
-        # print db_path
+        db_path = 'oneDir.db'#os.path.join(self.path, '.oneDir.db')
+        print db_path
         self.db = sqlite3.connect(db_path)
         # Get a cursor object for operations
         self.cur = self.db.cursor()
