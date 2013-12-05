@@ -1,5 +1,3 @@
-__author__ = 'justin'
-
 from Tkinter import *
 from ttk import Frame, Style
 import twitter_db_ops
@@ -29,7 +27,7 @@ class View(Frame):
         self.lock = False
 
     def initUI(self):
-        self.parent.title("OneDir Server Admin Interface")
+        self.parent.title("Twitter Interface")
         #self.pack(fill=BOTH, expand=1)
         commands = Label(self.parent, text="Commands")
         commands.grid(row=0, columnspan=3)
@@ -105,15 +103,15 @@ class View(Frame):
         sizeLabel = Label(self.parent, text="Get Sizes")
         sizeLabel.grid(row=9, column=0)
 
-        sizeUButton = Button(self.parent, text="By User", command=self.govnah.printUsersFileSpace)
-        sizeUButton.grid(row=9, column=1)
+        #sizeUButton = Button(self.parent, text="By User", command=self.govnah.printUsersFileSpace)
+        #sizeUButton.grid(row=9, column=1)
 
-        sizeTButton = Button(self.parent, text="Total", command=self.govnah.printTotalFileSpace)
-        sizeTButton.grid(row=9, column=2)
+        #sizeTButton = Button(self.parent, text="Total", command=self.govnah.printTotalFileSpace)
+        #sizeTButton.grid(row=9, column=2)
 
-        self.img = ImageTk.PhotoImage(file='img/logo50.png')
-        logoLabel = Label(self.parent, image=self.img)
-        logoLabel.grid(row=11, column=0)
+        #self.img = ImageTk.PhotoImage(file='img/logo50.png')
+        #logoLabel = Label(self.parent, image=self.img)
+        #logoLabel.grid(row=11, column=0)
 
         slogan = Label(self.parent, text="This Directory\nis a OneDir!", font=("Helvetica", 10, "bold italic"))
         slogan.grid(row = 11, column=1, columnspan=2)
@@ -262,18 +260,18 @@ class DaemonView(Frame):
 class SInterface():
 
     def __init__(self):
-        self.prefs = DbOps.ServerPrefs()
+        self.prefs = twitter_db_ops.ServerPrefs()
         self.path = self.prefs.getOption("path")
         # This is the model. The db class is a wrapper around database operations.
-        self.db = DbOps.DbOps(self.path)
+        self.db = twitter_db_ops.DbOps(self.path)
         self.daemon = None
         self.dview = None
         self.dioq = Queue.Queue()
         self.dioeq = Queue.Queue()
         self.root = Tk()
         self.root.geometry("1150x400+100+100")
-        img = ImageTk.PhotoImage(file='img/logo50.png')
-        self.root.tk.call('wm', 'iconphoto', self.root._w, img)
+        #img = ImageTk.PhotoImage(file='img/logo50.png')
+        #self.root.tk.call('wm', 'iconphoto', self.root._w, img)
         self.view = View(self.root, self)
         self.root.protocol('WM_DELETE_WINDOW', self.close)
         self.root.mainloop()
@@ -318,18 +316,18 @@ class SInterface():
         self.view.appendText("The list of transactions, sorted by type. (Unique ID, username, type, path, size, timestamp)")
         self.printSanitizeDBstrDub(self.db.getTransByType())
 
-    def printUsersFileSpace(self):
-        users = self.db.getUsersByUName()
-        for row in users:
-            up = os.path.join(self.path, row[1])
-            try:
-                self.view.appendText(row[1] + " " + str(common.get_size(up)/1024) + "KB")
-            except:
-                pass
+    #def printUsersFileSpace(self):
+    #    users = self.db.getUsersByUName()
+    #    for row in users:
+    #        up = os.path.join(self.path, row[1])
+    #        try:
+    #            self.view.appendText(row[1] + " " + str(common.get_size(up)/1024) + "KB")
+    #        except:
+    #            pass
 
-    def printTotalFileSpace(self):
-        up = os.path.join(self.path)
-        self.view.appendText("Total file space used by all users: " + str(common.get_size(up)/1024) + "KB")
+    #def printTotalFileSpace(self):
+    #    up = os.path.join(self.path)
+    #    self.view.appendText("Total file space used by all users: " + str(common.get_size(up)/1024) + "KB")
 
     def printSanitizeDBstr(self, results):
         for entry in results:
@@ -366,7 +364,7 @@ class SInterface():
         self.prefs.checkPath(path)
         self.prefs.setOption("path", path)
         self.path = path
-        self.db = DbOps.DbOps(self.path)
+        self.db = twitter_db_ops.DbOps(self.path)
         if self.daemon is not None:
             self.view.appendText("OneDir Directory has changed to: " + self.path + " but there is still a daemon running on"
                                  + self.dview.path)

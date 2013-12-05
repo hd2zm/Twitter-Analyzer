@@ -1,5 +1,3 @@
-__author__ = 'Justin Ingram'
-
 import sqlite3, hashlib
 from datetime import datetime
 import os
