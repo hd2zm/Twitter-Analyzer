@@ -19,11 +19,10 @@ class SInterface():
         self.path = self.prefs.getOption("path")
         # This is the model. The db class is a wrapper around database operations.
         self.db = twitter_db_ops.DbOps(self.path)
-        self.daemon = None
         self.dview = None
         self.dioq = Queue.Queue()
         self.dioeq = Queue.Queue()
-        self.root = Tk()
+        self.root =Tk()
         self.root.geometry("1150x400+100+100")
         #img = ImageTk.PhotoImage(file='img/logo50.png')
         #self.root.tk.call('wm', 'iconphoto', self.root._w, img)
@@ -70,6 +69,8 @@ class SInterface():
         self.view.appendText("The list of transactions, sorted by type. (Unique ID, username, type, path, size, timestamp)")
         self.printSanitizeDBstrDub(self.db.getTransByType())
 
+    def searchUsername(self):
+        pass
     #def printUsersFileSpace(self):
     #    users = self.db.getUsersByUName()
     #    for row in users:
