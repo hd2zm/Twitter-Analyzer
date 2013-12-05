@@ -3,7 +3,7 @@ from ttk import Frame, Style
 import twitter_db_ops
 from idlelib.WidgetRedirector import WidgetRedirector
 import tkMessageBox
-from PIL import ImageTk
+from PIL import ImageTk, Image
 import subprocess
 import threading
 import Queue
@@ -106,12 +106,11 @@ class View(Frame):
         #sizeTButton = Button(self.parent, text="Total", command=self.govnah.printTotalFileSpace)
         #sizeTButton.grid(row=9, column=2)
 
-        #self.img = ImageTk.PhotoImage(file='img/logo50.png')
-        #logoLabel = Label(self.parent, image=self.img)
-        #logoLabel.grid(row=11, column=0)
-
-        slogan = Label(self.parent, text="This Directory\nis a OneDir!", font=("Helvetica", 10, "bold italic"))
-        slogan.grid(row = 11, column=1, columnspan=2)
+        original = Image.open("twitlogo.png")
+        resized = original.resize((100, 100), Image.ANTIALIAS)
+        self.img = ImageTk.PhotoImage(resized)
+        logoLabel = Label(self.parent, image=self.img)
+        logoLabel.grid(row=11, column=0)
 
         self.log.insert(END, "Howdy Admin, Welcome to the Server Interface \n\n")
 
