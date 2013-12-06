@@ -13,26 +13,18 @@ class Singleton:
     return self.instance
 
 @Singleton
-class DbOps:
-    # KMW EDITS: changed things to os.path.join to handle trailing "/" robustly
-
-    def __init__(self):
-        db_path = '.twitteranalyzer.db'#os.path.join(self.path, '.oneDir.db')
-
-    instance = None
-
+class TwitterDbOps:
     def __init__(self, path):
-        # Connect to the database. Name should be preceeded with a . so its a hidden file
-        """
-
-        :param path:
-        """
         if not path:
-            #self.path = os.path.join(str(os.getenv("HOME")), "OneDir")
+            self.path = ".twitteranalyzer.db"
             pass
         else:
-            self.path = path
-        db_path = '.twitteranalyzer.db'#os.path.join(self.path, '.oneDir.db')
+            self.path = os.path.join(self.path, '.twitteranalyzer.db')
+
+        if os.path.exists(self.path):
+            os.remove(self.path)
+
+        db_path = self.path
         self.db = sqlite3.connect(db_path)
         # Get a cursor object for operations
         self.cur = self.db.cursor()
@@ -44,7 +36,7 @@ class DbOps:
         # A method to make sure that all our tables in the database are initialized and ready to go
         self.cur.execute("CREATE TABLE IF NOT EXISTS tweets(id INTEGER PRIMARY KEY ASC, tweet TEXT, date DATE)")
         self.cur.execute("CREATE TABLE IF NOT EXISTS hashtags(id INTEGER PRIMARY KEY ASC, tweet id INTEGER, hashtag TEXT)")
-        self.cur.execute("CREATE TABLE IF NOT EXISTS references(id INTEGER PRIMARY KEY ASC, tweet id INTEGER, reference TEXT)")
+        self.cur.execute("CREATE TABLE IF NOT EXISTS reference(id INTEGER PRIMARY KEY ASC, tweet id INTEGER, reference TEXT)")
         # before exiting method
         self.db.commit()
 
@@ -68,20 +60,21 @@ class DbOps:
         self.cur.execute("INSERT INTO tweets VALUES(?,?,?)",[None,tweet,date])
         self.db.commit()
 
-        self.cur.execute('SELECT * FROM tweets WHERE tweet=?',[tweet])
-        tweetid = self.cur.fetchone()
+        self.cur.execute('SELECT id FROM tweets WHERE tweet=?',[tweet])
+        tweetid = self.cur.fetchone()[0]
+        print tweetid
 
-        self.hash(tweetid, tweet)
-        self.refer(tweetid,tweet)
+        self.createHashtag(tweetid, tweet)
+        self.createReference(tweetid,tweet)
 
     def createHashtag(self,tweetid, tweet):
         for reg in re.findall('#\S*',tweet):
-            self.cur.execute("INSERT INTO tweets VALUES(?,?,?)",[None,tweetid,tweet])
+            self.cur.execute("INSERT INTO hashtags VALUES(?,?,?)",[None,tweetid,reg])
         self.db.commit()
 
     def createReference(self,tweetid, tweet):
         for reg in re.findall('@\S*',tweet):
-            self.cur.execute("INSERT INTO tweets VALUES(?,?,?)",[None,tweetid,tweet])
+            self.cur.execute("INSERT INTO reference VALUES(?,?,?)",[None,tweetid,reg])
         self.db.commit()
 
 
@@ -202,7 +195,7 @@ class ServerPrefs:
             return result[1]
 '''
 if __name__== '__main__':
-     odsd = DbOps()
+     odsd = TwitterDbOps()
      odsd.start()
      print odsd.getUsersByTime()
      print odsd.getUsersByUName()

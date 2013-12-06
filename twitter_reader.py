@@ -2,7 +2,7 @@ __author__ = 'venkat'
 
 import tweepy
 from twython import *
-from twitter_db_ops import DbOps
+from twitter_db_ops import TwitterDbOps
 import time
 import sys
 
@@ -13,8 +13,11 @@ class TwitterReader:
         self.cS = consumerSecret
         self.aK = accessKey
         self.aS = accessSecret
-        self.twitter = Twython(self.cK, self.cS, self.aK, self.aS)
-        #self.dbops = DbOps()
+        try:
+            self.twitter = Twython(self.cK, self.cS, self.aK, self.aS)
+        except TwythonAuthError:
+            print "Authentication failed"
+        self.dbops = TwitterDbOps("")
 
     def getAPI(self, auth):
         return self.twitter
@@ -41,7 +44,7 @@ class TwitterReader:
                 timeline = self.twitter.get_user_timeline(screen_name=user, count=cnt)
                 for tweet in timeline:
                     tweets_requested.append(tweet)
-                    #self.dbops.createTweet(tweet['text'], tweet[''])
+                    #self.dbops.createTweet(tweet['text'], self.parse_date(tweet['created_at']))
             elif cnt > 200:
                 number_of_tweets = 0
                 cntleft = cnt
@@ -52,7 +55,7 @@ class TwitterReader:
                         number_of_tweets+=1
                         lowest_id = tweet['id']
                         tweets_requested.append(tweet)
-                    #self.dbops.createTweet(tweet['text'], tweet['created_at'])
+                    #self.dbops.createTweet(tweet['text'], self.parse_date(tweet['created_at']))
                 lowest_id -= 1
                 while(number_of_tweets < cnt):
                     if cntleft>200:
@@ -65,8 +68,8 @@ class TwitterReader:
                             number_of_tweets+=1
                             lowest_id = tweet['id']
                             tweets_requested.append(tweet)
+                        #self.dbops.createTweet(tweet['text'], self.parse_date(tweet['created_at']))
                     lowest_id -= 1
-                        #self.dbops.createTweet(tweet['text'], tweet['created_at'])
             else:
                 print "something strange happened"
             return tweets_requested
@@ -74,6 +77,7 @@ class TwitterReader:
             raise TwitterReaderException
 
     def parse_date(self, date):
+        print date
         ts = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(date,'%a %b %d %H:%M:%S +0000 %Y'))
         return ts
 
@@ -89,7 +93,7 @@ twitter = TwitterReader(consumerKey, consumerSecret, accessKey, accessSecret)
 #lookup_user = twitter.lookup_user("KingJames")
 #print lookup_user
 #print twitter.get_application_rate_limit_status()#['/statuses/home_timeline']
-tweets = twitter.get_tweets_from_user("KingJames", 1)
+tweets = twitter.get_tweets_from_user("KingJames", 5)
 for tweet in tweets:
-    print twitter.parse_date(tweet['created_at'])
+    print tweet['text'], tweet['created_at']
 print len(tweets)
