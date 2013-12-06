@@ -20,7 +20,7 @@ class SInterface():
 
     def __init__(self):
         # This is the model. The db class is a wrapper around database operations.
-        self.dbops = Singleton.TwitterDbOps("")
+        self.dbops = TwitterDbOps("")
         self.root =Tk()
         self.root.geometry("1150x400+100+100")
 
