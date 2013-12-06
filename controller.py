@@ -1,4 +1,6 @@
 __author__ = 'owner'
+__faggot__ = 'venkat'
+
 from Tkinter import *
 from ttk import Frame, Style
 import twitter_db_ops
