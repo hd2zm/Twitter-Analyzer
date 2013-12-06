@@ -1,4 +1,6 @@
 __author__ = 'owner'
+__faggot__ = 'venkat'
+
 from Tkinter import *
 from ttk import Frame, Style
 import twitter_db_ops
@@ -82,7 +84,7 @@ class SInterface():
 
     def tweetsToDB(self,tweets):
         for tweet in tweets:
-            self.dbops.createTweet(tweet['text'], tweet['created_at'])
+            self.dbops.createTweet(tweet['text'], self.tweetReader.parseDate(tweet['created_at']))
     #call twitter stuff
     #def printUsersFileSpace(self):
     #    users = self.db.getUsersByUName()
