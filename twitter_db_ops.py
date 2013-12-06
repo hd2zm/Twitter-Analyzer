@@ -32,7 +32,7 @@ class DbOps:
             pass
         else:
             self.path = path
-        db_path = '.oneDir.db'#os.path.join(self.path, '.oneDir.db')
+        db_path = '.twitteranalyzer.db'#os.path.join(self.path, '.oneDir.db')
         self.db = sqlite3.connect(db_path)
         # Get a cursor object for operations
         self.cur = self.db.cursor()
