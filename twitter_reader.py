@@ -23,7 +23,7 @@ class TwitterReader:
         try:
             user = self.twitter.lookup_user(screen_name=user)
             return True
-        except TwythonError:
+        except (TwythonError, TwythonRateLimitError):
             return False
 
     def get_tweets_from_user(self, user, cnt=20):
@@ -86,10 +86,10 @@ accessKey = '1106939719-KyTHxcGncJp0vgxTjH8P2AmaGQ13B5ert7YZR0t'
 accessSecret = 'PqIuAYKTuKFfrg24CAhuwigh5R2udkl2Fls06mTaZLhXZ'
 
 twitter = TwitterReader(consumerKey, consumerSecret, accessKey, accessSecret)
-lookup_user = twitter.lookup_user("KingJames")
-print lookup_user
+#lookup_user = twitter.lookup_user("KingJames")
+#print lookup_user
 #print twitter.get_application_rate_limit_status()#['/statuses/home_timeline']
-#tweets = twitter.get_tweets_from_user("haioshdasiod", 1)
-#for tweet in tweets:
-#    print tweet['text']
-#print len(tweets)
+tweets = twitter.get_tweets_from_user("KingJames", 1)
+for tweet in tweets:
+    print twitter.parse_date(tweet['created_at'])
+print len(tweets)
