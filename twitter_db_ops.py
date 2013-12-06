@@ -3,10 +3,36 @@ from datetime import datetime
 import os
 import re
 
+class Singleton:
+  def __init__(self, klass):
+    self.klass = klass
+    self.instance = None
+  def __call__(self, *args, **kwds):
+    if self.instance == None:
+      self.instance = self.klass(*args, **kwds)
+    return self.instance
+
+@Singleton
 class DbOps:
     # KMW EDITS: changed things to os.path.join to handle trailing "/" robustly
+
     def __init__(self):
         db_path = '.twitteranalyzer.db'#os.path.join(self.path, '.oneDir.db')
+
+    instance = None
+
+    def __init__(self, path):
+        # Connect to the database. Name should be preceeded with a . so its a hidden file
+        """
+
+        :param path:
+        """
+        if not path:
+            #self.path = os.path.join(str(os.getenv("HOME")), "OneDir")
+            pass
+        else:
+            self.path = path
+        db_path = '.oneDir.db'#os.path.join(self.path, '.oneDir.db')
         self.db = sqlite3.connect(db_path)
         # Get a cursor object for operations
         self.cur = self.db.cursor()
@@ -22,9 +48,17 @@ class DbOps:
         # before exiting method
         self.db.commit()
 
-    def userExists(self, userName):
-        self.cur.execute('SELECT * FROM user WHERE username=?',[userName])
-        result = self.cur.fetchall()
+    def hashtagExists(self, hashtag):
+        self.cur.execute('SELECT * FROM hashtags WHERE hashtag=?',[hashtag])
+        result  = self.cur.fetchall()
+        if(len(result) > 0):
+            return True
+        else:
+            return False
+
+    def referenceExists(self, reference):
+        self.cur.execute('SELECT * FROM references WHERE reference=?',[reference])
+        result  = self.cur.fetchall()
         if(len(result) > 0):
             return True
         else:
@@ -53,6 +87,11 @@ class DbOps:
 
 
     '''
+=======
+    def createHashtag(self, hashtag, id):
+        if not self.hashtagExists(hashtag):
+            self.cur.execute("INSERT INTO hashtags VALUES(?,?)")
+>>>>>>> Stashed changes
     def createUser(self, userName, password):
         if not self.userExists(userName):
             self.cur.execute("INSERT INTO user VALUES(?,?,?,?)",[None, userName, hashlib.sha256(password).hexdigest(), datetime.now()])
