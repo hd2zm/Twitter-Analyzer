@@ -3,7 +3,7 @@ from ttk import Frame, Style
 import twitter_db_ops
 from idlelib.WidgetRedirector import WidgetRedirector
 import tkMessageBox
-from PIL import ImageTk, Image
+from PIL import ImageTk
 import subprocess
 import threading
 import Queue
@@ -42,75 +42,47 @@ class View(Frame):
 
         scrollbar.config(command=self.log.yview)
 
-        userStuff = Label(self.parent, text="List Users: ")
-        userStuff.grid(row=1, column=0)
+        ulabel = Label(self.parent, text="Username: ")
+        ulabel.grid(row=1, column=0)
 
-        printUserName = Button(self.parent, text="By Name", command=self.govnah.printUsersByName)
-        printUserName.grid(row=1, column=1)
+        self.username = Entry(self.parent, width=14, bg="white")
+        self.username.grid(row=1, column=1, columnspan=2)
 
-        printUserTime = Button(self.parent, text="By Time", command=self.govnah.printUsersByTime)
-        printUserTime.grid(row=1, column=2)
+        searchUsername = Button(self.parent, text="     Search     ", command = self.govnah.searchUsername)
+        searchUsername.grid(row = 2, column =0, columnspan = 3)
 
-        trans = Label(self.parent, text="List Transactions: ")
-        trans.grid(row=2, column=0)
+        ntlabel = Label(self.parent, text = "Number of Tweets:")
+        ntlabel.grid(row = 3, column = 0)
 
-        printTransType = Button(self.parent, text="By Type", command=self.govnah.printTransByType)
-        printTransType.grid(row=2, column=1)
+        self.numTweets = Entry(self.parent, width = 14, bg = "white")
+        self.numTweets.grid(row = 3, column = 2)
+        self.numTweets.insert(END,"20")
 
-        printTransTime = Button(self.parent, text="By Time", command=self.govnah.printTransByTime)
-        printTransTime.grid(row=2, column=2)
+        sdlabel = Label(self.parent, text = "Start Date:")
+        sdlabel.grid(row = 4, column = 0)
 
-        printTransSize = Button(self.parent, text="By Size", command=self.govnah.printTransBySize)
-        printTransSize.grid(row=3, column=1)
+        self.sDate = Entry(self.parent, width = 14, bg = "white")
+        self.sDate.grid(row = 5, column = 0)
+        self.sDate.insert(END,"MM/DD/YYYY")
 
-        printTransUser = Button(self.parent, text="By User", command=self.govnah.printTransByUser)
-        printTransUser.grid(row=3, column=2)
+        edlabel = Label(self.parent, text = "End Date:")
+        edlabel.grid(row = 4, column = 2)
 
-        trans = Label(self.parent, text="Search User: ")
-        trans.grid(row=4, column=0)
+        self.eDate = Entry(self.parent, width = 14, bg = "white")
+        self.eDate.grid(row = 5, column = 2)
+        self.eDate.insert(END,"MM/DD/YYYY")
 
-        vcmd = (self.parent.register(self.valid), '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
+        searchUsername = Button(self.parent, text="List Tweets", command = self.govnah.listTweets, width = 20 )
+        searchUsername.grid(row = 6, column =0, columnspan = 3)
 
-        uentry = Entry(self.parent, width=20, bg="white", validate="key", validatecommand=vcmd)
-        uentry.grid(row=4, column=1, columnspan=2)
+        searchUsername = Button(self.parent, text="Most Used Hashtags", command = self.govnah.mostHash, width = 20 )
+        searchUsername.grid(row = 7, column =0, columnspan = 3)
 
-        trans = Label(self.parent, text="Actions: ")
-        trans.grid(row=6, column=0)
+        searchUsername = Button(self.parent, text="Time graph", command = self.govnah.timeGraph, width = 20 )
+        searchUsername.grid(row = 8, column =0, columnspan = 3)
 
-        changepw = Button(self.parent, text="Change\nPassword", command=self.getNewPw)
-        changepw.grid(row=6, column=1)
-
-        delete = Button(self.parent, text="Delete", command=self.delUser)
-        delete.grid(row=6, column=2)
-
-        self.uinfo = Label(self.parent, text="")
-        self.uinfo.grid(row=5, column=1, columnspan=2)
-
-        pathLabel = Label(self.parent, text="Search Hashtag:")
-        pathLabel.grid(row=7, column=0)
-
-        self.path = self.govnah.path
-        self.pathEntry = Entry(self.parent, width=20, bg="white")
-        self.pathEntry.insert(END, self.path)
-        self.pathEntry.grid(row = 7, column=1, columnspan=2)
-
-        performChange = Button(self.parent, text="Change OneDir\nDirectory", command=self.chngPath)
-        performChange.grid(row=8, column=1, columnspan=2)
-
-        sizeLabel = Label(self.parent, text="Get Sizes")
-        sizeLabel.grid(row=9, column=0)
-
-        #sizeUButton = Button(self.parent, text="By User", command=self.govnah.printUsersFileSpace)
-        #sizeUButton.grid(row=9, column=1)
-
-        #sizeTButton = Button(self.parent, text="Total", command=self.govnah.printTotalFileSpace)
-        #sizeTButton.grid(row=9, column=2)
-
-        original = Image.open("twitlogo.png")
-        resized = original.resize((150, 150), Image.ANTIALIAS)
-        self.img = ImageTk.PhotoImage(resized)
-        logoLabel = Label(self.parent, image=self.img)
-        logoLabel.grid(row=11, column=0, rowspan=3, columnspan=3)
+        searchUsername = Button(self.parent, text="Most Communicated with", command = self.govnah.communicated, width = 20 )
+        searchUsername.grid(row = 9, column =0, columnspan = 3 )
 
         self.log.insert(END, "Howdy Admin, Welcome to the Server Interface \n\n")
 
@@ -207,83 +179,3 @@ class View(Frame):
         win.deiconify()
 
 # This module implements a MVC model. This class is the View and contains the UI Stuff
-class DaemonView(Frame):
-
-
-    def __init__(self, parent, govnah, path):
-        self.parent = parent
-        self.govnah = govnah
-        self.path = path
-        self.initUI()
-
-    def initUI(self):
-
-        scrollbar = Scrollbar(self.parent)
-        scrollbar.grid(row=0, column=1, sticky=N+S)
-
-        self.log = ReadOnlyText(self.parent, bg="white", undo=False, yscrollcommand=scrollbar.set, width=80)
-        self.log.tag_config("errorstring", foreground="#CC0000")
-        self.log.grid(row=0, column=0)
-
-        button = Button(self.parent, text="Stop this Daemon", command=self.stop)
-        button.grid(row=1, columnspan=2)
-
-        scrollbar.config(command=self.log.yview)
-
-    def stop(self):
-        self.govnah.stopServer()
-
-    # This is designed to be recursively called (every 50ms) to continually update the DaemonView Window when new
-    # output is available form the queue.
-    def update(self):
-        try:
-            msg = self.govnah.dioq.get_nowait()
-            if msg:
-                self.log.insert(END, msg + "\n")
-        except Queue.Empty:
-            pass
-
-        try:
-            msg = self.govnah.dioeq.get_nowait()
-            if msg:
-                self.log.insert(END, msg + "\n", ('errorstring',))
-        except Queue.Empty:
-            pass
-        self.log.see(END)
-        self.parent.after(50, self.update)
-
-
-# A class that will be run in a separate thread that takes output from the server daemon and puts it into a queue that
-# will be read from by the DaemonView
-class Piper (threading.Thread):
-    def __init__(self, govnah):
-        threading.Thread.__init__(self)
-        self.govnah = govnah
-        self.stop = False
-
-    def stopThread(self):
-        self.stop = True
-
-    def run(self):
-        while not self.stop:
-            while True:
-                try:
-                    line = self.govnah.daemon.stdout.readline()
-                except AttributeError:
-                    break
-
-                if not line:
-                    break
-                else:
-                    self.govnah.dioq.put(line, True)
-
-            while True:
-                try:
-                    line = self.govnah.daemon.stderr.readline()
-                except AttributeError:
-                    break
-
-                if not line:
-                    break
-                else:
-                    self.govnah.dioeq.put(line, True)

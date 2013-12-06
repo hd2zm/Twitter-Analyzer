@@ -44,33 +44,34 @@ class SInterface():
         print "6. Start Server Daemon"
         print "0. Exit"
         print "-----------------------------------------\n"
-
+    '''
     def printUsersByName(self):
         self.view.appendText("The list of users, sorted by username. (Unique ID, username, password hash, registration timestamp)")
         self.printSanitizeDBstr(self.db.getUsersByUName())
-
-    def printUsersByTime(self):
-        self.view.appendText("The list of users, sorted by registration time. (Unique ID, username, password hash, registration timestamp)")
-        self.printSanitizeDBstr(self.db.getUsersByTime())
-
-    def printTransByUser(self):
-        self.view.appendText("The list of transactions, sorted by username. (Unique ID, username, type, path, size, timestamp)")
-        self.printSanitizeDBstrDub(self.db.getTransByUser())
-
-    def printTransBySize(self):
-        self.view.appendText("The list of transactions, sorted by size. (Unique ID, username, type, path, size, timestamp)")
-        self.printSanitizeDBstrDub(self.db.getTransBySize())
-
-    def printTransByTime(self):
-        self.view.appendText("The list of transactions, sorted by timestamp. (Unique ID, username, type, path, size, timestamp)")
-        self.printSanitizeDBstrDub(self.db.getTransByTime())
-
-    def printTransByType(self):
-        self.view.appendText("The list of transactions, sorted by type. (Unique ID, username, type, path, size, timestamp)")
-        self.printSanitizeDBstrDub(self.db.getTransByType())
+    '''
 
     def searchUsername(self):
+        print self.view.username.get()
+        if self.view.username.cget('bg')=="white":
+            self.view.username.config(bg='green')
+        elif self.view.username.cget('bg')=="green":
+            self.view.username.config(bg='red')
+        elif self.view.username.cget('bg')=="red":
+            self.view.username.config(bg='white')
+
+    def listTweets(self):
         pass
+
+    def mostHash(self):
+        pass
+
+    def timeGraph(self):
+        pass
+
+    def communicated(self):
+        pass
+
+    #call twitter stuff
     #def printUsersFileSpace(self):
     #    users = self.db.getUsersByUName()
     #    for row in users:
@@ -114,18 +115,6 @@ class SInterface():
     def setOption(self, option, value):
         if self.prefs.optionExists(option):
             self.prefs.setOption(option, value)
-
-    def changeDir(self, path):
-        self.prefs.checkPath(path)
-        self.prefs.setOption("path", path)
-        self.path = path
-        self.db = twitter_db_ops.DbOps(self.path)
-        if self.daemon is not None:
-            self.view.appendText("OneDir Directory has changed to: " + self.path + " but there is still a daemon running on"
-                                 + self.dview.path)
-        else:
-            self.view.appendText("One Directory has changed to: " + self.path)
-
 
     def start(self):
         while True:
