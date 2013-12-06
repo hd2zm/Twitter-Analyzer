@@ -1,17 +1,12 @@
 import sqlite3, hashlib
 from datetime import datetime
 import os
+import re
 
 class DbOps:
     # KMW EDITS: changed things to os.path.join to handle trailing "/" robustly
-    def __init__(self, path):
-        # Connect to the database. Name should be preceeded with a . so its a hidden file
-        if not path:
-            #self.path = os.path.join(str(os.getenv("HOME")), "OneDir")
-            pass
-        else:
-            self.path = path
-        db_path = '.oneDir.db'#os.path.join(self.path, '.oneDir.db')
+    def __init__(self):
+        db_path = '.twitteranalyzer.db'#os.path.join(self.path, '.oneDir.db')
         self.db = sqlite3.connect(db_path)
         # Get a cursor object for operations
         self.cur = self.db.cursor()
@@ -35,6 +30,29 @@ class DbOps:
         else:
             return False
 
+    def createTweet(self, tweet, date):
+        self.cur.execute("INSERT INTO tweets VALUES(?,?,?)",[None,tweet,date])
+        self.db.commit()
+
+        self.cur.execute('SELECT * FROM tweets WHERE tweet=?',[tweet])
+        tweetid = self.cur.fetchone()
+
+        self.hash(tweetid, tweet)
+        self.refer(tweetid,tweet)
+
+    def hash(self,tweetid, tweet):
+        for reg in re.findall('#\S*',tweet):
+            self.cur.execute("INSERT INTO tweets VALUES(?,?,?)",[None,tweetid,tweet])
+        self.db.commit()
+
+    def refer(self,tweetid, tweet):
+        for reg in re.findall('@\S*',tweet):
+            self.cur.execute("INSERT INTO tweets VALUES(?,?,?)",[None,tweetid,tweet])
+        self.db.commit()
+
+
+
+    '''
     def createUser(self, userName, password):
         if not self.userExists(userName):
             self.cur.execute("INSERT INTO user VALUES(?,?,?,?)",[None, userName, hashlib.sha256(password).hexdigest(), datetime.now()])
@@ -91,19 +109,14 @@ class DbOps:
     def recordTrans(self, userName, type, size, path):
         self.cur.execute("INSERT INTO transactions VALUES(?,?,?,?,?,?)",[None, userName, type, path, size, datetime.now()])
         self.db.commit()
-
+    '''
     def finish(self):
         self.db.close()
 
     def start(self):
-        self.createUser("zebra", "hello")
-        self.createUser("justin", "hello")
-        self.createUser('kevin', 'kevin')
-        self.recordTrans("justin", "put", 1024, "/home/justin")
-        self.recordTrans("zebra", "put", 856, "/home/zebra")
-        self.db.commit()
+       pass
 
-
+'''
 class ServerPrefs:
 
 
@@ -148,7 +161,7 @@ class ServerPrefs:
             self.cur.execute("SELECT * FROM serveropts WHERE option=?", [option])
             result = self.cur.fetchone()
             return result[1]
-
+'''
 if __name__== '__main__':
      odsd = DbOps()
      odsd.start()
