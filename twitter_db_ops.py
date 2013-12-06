@@ -21,9 +21,9 @@ class DbOps:
 
     def setup(self):
         # A method to make sure that all our tables in the database are initialized and ready to go
-        self.cur.execute("CREATE TABLE IF NOT EXISTS user(id INTEGER PRIMARY KEY ASC, username TEXT, password TEXT, ts TEXT, UNIQUE(username) ON CONFLICT IGNORE)")
-        self.cur.execute("CREATE TABLE IF NOT EXISTS transactions(id INTEGER PRIMARY KEY ASC, username TEXT, type TEXT, path TEXT, size INTEGER, ts TEXT)")
-
+        self.cur.execute("CREATE TABLE IF NOT EXISTS tweets(id INTEGER PRIMARY KEY ASC, tweet TEXT, date DATE)")
+        self.cur.execute("CREATE TABLE IF NOT EXISTS hashtags(id INTEGER PRIMARY KEY ASC, tweet id INTEGER, hashtag TEXT)")
+        self.cur.execute("CREATE TABLE IF NOT EXISTS references(id INTEGER PRIMARY KEY ASC, tweet id INTEGER, reference TEXT)")
         # before exiting method
         self.db.commit()
 
