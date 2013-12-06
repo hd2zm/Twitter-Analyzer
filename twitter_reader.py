@@ -49,7 +49,6 @@ class TwitterReader:
                     tweets_requested.append(tweet)
                 #self.dbops.createTweet(tweet['text'], tweet['created_at'])
             lowest_id -= 1
-
             while(number_of_tweets < cnt):
                 if cntleft>200:
                     cntleft-=200

@@ -74,12 +74,12 @@ class DbOps:
         self.hash(tweetid, tweet)
         self.refer(tweetid,tweet)
 
-    def hash(self,tweetid, tweet):
+    def createHashtag(self,tweetid, tweet):
         for reg in re.findall('#\S*',tweet):
             self.cur.execute("INSERT INTO tweets VALUES(?,?,?)",[None,tweetid,tweet])
         self.db.commit()
 
-    def refer(self,tweetid, tweet):
+    def createReference(self,tweetid, tweet):
         for reg in re.findall('@\S*',tweet):
             self.cur.execute("INSERT INTO tweets VALUES(?,?,?)",[None,tweetid,tweet])
         self.db.commit()
