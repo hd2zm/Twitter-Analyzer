@@ -1,6 +1,5 @@
 __author__ = 'venkat'
 
-import tweepy
 from twython import *
 from twitter_db_ops import TwitterDbOps
 import time
@@ -35,7 +34,7 @@ class TwitterReader:
             suser = self.twitter.show_user(screen_name=user)
             if(cnt > suser['statuses_count']):
                 cnt = suser['statuses_count']
-            print suser['statuses_count']
+            #print suser['statuses_count']
             #3000 is the rate limit for twitter API - 15 calls in 15 minutes (200 tweets per call)
             if(cnt > 3000):
                 cnt = 3000
@@ -77,13 +76,13 @@ class TwitterReader:
             raise TwitterReaderException
 
     def parse_date(self, date):
-        print date
+        #print date
         ts = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(date,'%a %b %d %H:%M:%S +0000 %Y'))
         return ts
 
 class TwitterReaderException:
     pass
-
+'''
 consumerKey = 'jf1RuBnCqdQCNmLX0frLg'
 consumerSecret = 'ThqOiemmb6u0unxovHEg9r9m4Lf0MaI30nqh3gwedI'
 accessKey = '1106939719-KyTHxcGncJp0vgxTjH8P2AmaGQ13B5ert7YZR0t'
@@ -97,3 +96,4 @@ tweets = twitter.get_tweets_from_user("KingJames", 5)
 for tweet in tweets:
     print tweet['text'], tweet['created_at']
 print len(tweets)
+'''

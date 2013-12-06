@@ -49,7 +49,7 @@ class TwitterDbOps:
             return False
 
     def referenceExists(self, reference):
-        self.cur.execute('SELECT * FROM references WHERE reference=?',[reference])
+        self.cur.execute('SELECT * FROM reference WHERE reference=?',[reference])
         result  = self.cur.fetchall()
         if(len(result) > 0):
             return True
@@ -77,7 +77,9 @@ class TwitterDbOps:
             self.cur.execute("INSERT INTO reference VALUES(?,?,?)",[None,tweetid,reg])
         self.db.commit()
 
-
+    def getTweets(self, count):
+        self.cur.execute("SELECT tweet FROM tweets ORDER BY date LIMIT ?",[count])
+        return self.cur.fetchall()
 
     '''
 =======

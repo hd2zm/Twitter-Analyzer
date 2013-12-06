@@ -29,7 +29,7 @@ class SInterface():
         self.consumerSecret = 'ThqOiemmb6u0unxovHEg9r9m4Lf0MaI30nqh3gwedI'
         self.accessKey = '1106939719-KyTHxcGncJp0vgxTjH8P2AmaGQ13B5ert7YZR0t'
         self.accessSecret = 'PqIuAYKTuKFfrg24CAhuwigh5R2udkl2Fls06mTaZLhXZ'
-        self.tweetReader = twitter_reader(self.consumerKey,self.consumerSecret,self.accessKey,self.accessSecret)
+        self.tweetReader = twitter_reader.TwitterReader(self.consumerKey,self.consumerSecret,self.accessKey,self.accessSecret)
 
         #img = ImageTk.PhotoImage(file='img/logo50.png')
         #self.root.tk.call('wm', 'iconphoto', self.root._w, img)
@@ -65,13 +65,15 @@ class SInterface():
                 tweets=self.tweetReader.get_tweets_from_user(self.view.username.get(),self.view.numTweets.get())
                 self.tweetsToDB(tweets)
             except twitter_reader.TwitterReaderException:
-                self.view.appnedText("Rate Limit Exceeded; Please wait 15 minutes.")
+                self.view.appendText("Rate Limit Exceeded; Please wait 15 minutes.")
 
         else:
             self.view.username.config(bg='red')
 
     def listTweets(self):
-        pass
+        tweets = self.dbops.getTweets(self.view.numTweets.get())
+        for tweet in tweets:
+            self.view.appendText(tweet[0])
 
     def mostHash(self):
         pass
