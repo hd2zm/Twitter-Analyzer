@@ -4,16 +4,15 @@ import os
 import re
 
 class Singleton:
-  def __init__(self, klass):
-    self.klass = klass
-    self.instance = None
-  def __call__(self, *args, **kwds):
-    if self.instance == None:
-      self.instance = self.klass(*args, **kwds)
-    return self.instance
+    _instances = {}
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
 
 @Singleton
 class TwitterDbOps:
+    __metaclass__ = Singleton
     def __init__(self, path):
         if not path:
             self.path = ".twitteranalyzer.db"
