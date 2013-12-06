@@ -73,7 +73,7 @@ class SInterface():
         #        self.view.appendText("Rate Limit Exceeded; Please wait 15 minutes.")
 
     def listTweets(self):
-        print self.view.numTweets.get()
+        #print self.view.numTweets.get()
         if self.view.numTweets.get() == "":
             tweets = self.dbops.getTweetsForList(self.view.numTweets.get(),False)
         else:
@@ -83,7 +83,21 @@ class SInterface():
             self.view.appendText(tweet[1] + "\n")
 
     def mostHash(self):
-        pass
+        hashes = self.dbops.getHashtags()
+        hashdict = {}
+        hasharray = []
+
+        for hash in hashes:
+            if hash[0] in hashdict:
+                hashdict[hash[0]]= hashdict[hash[0]]+1
+            else:
+                hashdict[hash[0]] = 1
+        for n in hashdict:
+            hasharray.append((hashdict[n],n))
+        hasharray.sort(reverse=True)
+        self.view.appendText("Most used Hashtags:")
+        for n in hasharray:
+            self.view.appendText('%s used %d times'%(hasharray[1],hasharray[0]))
 
     def timeGraph(self):
         pass

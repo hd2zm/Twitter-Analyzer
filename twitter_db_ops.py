@@ -98,6 +98,10 @@ class TwitterDbOps:
         self.cur.execute("SELECT * FROM tweets ORDER BY date DESC")
         return self.cur.fetchall()
 
+    def getHashtags(self):
+        self.cur.execute("SELECT hashtag FROM hashtags")
+        return self.cur.fetchall()
+
     '''
 =======
     def createHashtag(self, hashtag, id):
