@@ -88,6 +88,7 @@ class SInterface():
         hasharray = []
 
         for hash in hashes:
+            print hash[0]
             if hash[0] in hashdict:
                 hashdict[hash[0]]= hashdict[hash[0]]+1
             else:
@@ -96,6 +97,8 @@ class SInterface():
             hasharray.append((hashdict[n],n))
         hasharray.sort(reverse=True)
         self.view.appendText("Most used Hashtags:")
+        print hasharray
+        print hashdict
         for n in hasharray:
             self.view.appendText('%s used %d times'%(hasharray[1],hasharray[0][0]))
 
