@@ -71,12 +71,12 @@ class TwitterDbOps:
         self.createReference(tweetid,tweet)
 
     def createHashtag(self,tweetid, tweet):
-        for reg in re.findall('#\S*',tweet):
+        for reg in re.findall('#\w*',tweet):
             self.cur.execute("INSERT INTO hashtags VALUES(?,?,?)",[None,tweetid,reg])
         self.db.commit()
 
     def createReference(self,tweetid, tweet):
-        for reg in re.findall('@\S*',tweet):
+        for reg in re.findall('@\w*',tweet):
             self.cur.execute("INSERT INTO reference VALUES(?,?,?)",[None,tweetid,reg])
         self.db.commit()
 

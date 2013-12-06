@@ -88,11 +88,10 @@ class SInterface():
         hasharray = []
 
         for hash in hashes:
-            print hash[0]
-            if hash[0] in hashdict:
-                hashdict[hash[0]]= hashdict[hash[0]]+1
+            if hash[0].lower() in hashdict:
+                hashdict[hash[0].lower()]= hashdict[hash[0].lower()]+1
             else:
-                hashdict[hash[0]] = 1
+                hashdict[hash[0].lower()] = 1
         for n in hashdict:
             hasharray.append((hashdict[n],n))
         hasharray.sort(reverse=True)
@@ -100,7 +99,7 @@ class SInterface():
         print hasharray
         print hashdict
         for n in hasharray:
-            self.view.appendText('%s used %d times'%(hasharray[1],hasharray[0][0]))
+            self.view.appendText('%s used %d times'%(n[1],n[0]))
 
     def timeGraph(self):
         pass
