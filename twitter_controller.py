@@ -11,17 +11,16 @@ import subprocess
 import threading
 import Queue
 import os
-import twitter_interface
-import twitter_reader
+from twitter_interface import *
+from twitter_reader import *
+from twitter_db_ops import *
 
 # The main class for this module. This class is the controller and defines the behaviours.
 class SInterface():
 
     def __init__(self):
         # This is the model. The db class is a wrapper around database operations.
-        self.dview = None
-        self.dioq = Queue.Queue()
-        self.dioeq = Queue.Queue()
+        self.dbops = TwitterDbOps("")
         self.root =Tk()
         self.root.geometry("1150x400+100+100")
 
@@ -29,11 +28,11 @@ class SInterface():
         self.consumerSecret = 'ThqOiemmb6u0unxovHEg9r9m4Lf0MaI30nqh3gwedI'
         self.accessKey = '1106939719-KyTHxcGncJp0vgxTjH8P2AmaGQ13B5ert7YZR0t'
         self.accessSecret = 'PqIuAYKTuKFfrg24CAhuwigh5R2udkl2Fls06mTaZLhXZ'
-        self.tweetReader = twitter_reader.TwitterReader(self.consumerKey,self.consumerSecret,self.accessKey,self.accessSecret)
+        self.tweetReader = TwitterReader(self.consumerKey,self.consumerSecret,self.accessKey,self.accessSecret)
 
         #img = ImageTk.PhotoImage(file='img/logo50.png')
         #self.root.tk.call('wm', 'iconphoto', self.root._w, img)
-        self.view = twitter_interface.View(self.root, self)
+        self.view = View(self.root, self)
         self.root.protocol('WM_DELETE_WINDOW', self.close)
         self.root.mainloop()
 
@@ -58,22 +57,27 @@ class SInterface():
     '''
 
     def searchUsername(self):
-
+        #self.dbops.setup()
+        valid = False
         if self.tweetReader.lookup_user(self.view.username.get()):
             self.view.username.config(bg='green')
-            try:
-                tweets=self.tweetReader.get_tweets_from_user(self.view.username.get(),self.view.numTweets.get())
-                self.tweetsToDB(tweets)
-            except twitter_reader.TwitterReaderException:
-                self.view.appendText("Rate Limit Exceeded; Please wait 15 minutes.")
-
+            self.view.appendText("User: %s is valid!" %self.view.username.get())
+            valid = True
         else:
             self.view.username.config(bg='red')
+        #if valid:
+        #    try:
+        #        tweets=self.tweetReader.get_tweets_from_user(self.view.username.get(),self.view.numTweets.get())
+        #        self.tweetsToDB(tweets)
+        #    except TwitterReaderException:
+        #        self.view.appendText("Rate Limit Exceeded; Please wait 15 minutes.")
 
     def listTweets(self):
-        tweets = self.dbops.getTweets(self.view.numTweets.get())
+        print self.view.numTweets.get()
+        tweets = self.dbops.getTweetsForList(self.view.numTweets.get())
         for tweet in tweets:
-            self.view.appendText(tweet[0])
+            self.view.appendText(tweet[2])
+            self.view.appendText(tweet[1] + "\n")
 
     def mostHash(self):
         pass
@@ -86,7 +90,7 @@ class SInterface():
 
     def tweetsToDB(self,tweets):
         for tweet in tweets:
-            self.dbops.createTweet(tweet['text'], self.tweetReader.parseDate(tweet['created_at']))
+            self.dbops.createTweet(tweet['text'], self.tweetReader.parse_date(tweet['created_at']))
     #call twitter stuff
     #def printUsersFileSpace(self):
     #    users = self.db.getUsersByUName()

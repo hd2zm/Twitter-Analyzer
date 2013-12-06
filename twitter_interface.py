@@ -131,7 +131,7 @@ class View(Frame):
 
 
     def appendText(self, text):
-        self.log.insert(END, str(text) + "\n")
+        self.log.insert(END, str(text.encode("utf-8")) + "\n")
         self.log.see(END)
 
     def getNewPw(self):

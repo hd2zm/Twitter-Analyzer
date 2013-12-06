@@ -21,24 +21,27 @@ class TwitterDbOps:
         else:
             self.path = os.path.join(self.path, '.twitteranalyzer.db')
 
-        if os.path.exists(self.path):
-            os.remove(self.path)
-
-        db_path = self.path
-        self.db = sqlite3.connect(db_path)
-        # Get a cursor object for operations
-        self.cur = self.db.cursor()
+        #if os.path.exists(self.path):
+        #    os.remove(self.path)
         self.setup()
         self.start()
 
 
     def setup(self):
+        self.drop_tables()
+        self.db = sqlite3.connect(self.path)
+        # Get a cursor object for operations
+        self.cur = self.db.cursor()
         # A method to make sure that all our tables in the database are initialized and ready to go
         self.cur.execute("CREATE TABLE IF NOT EXISTS tweets(id INTEGER PRIMARY KEY ASC, tweet TEXT, date DATE)")
         self.cur.execute("CREATE TABLE IF NOT EXISTS hashtags(id INTEGER PRIMARY KEY ASC, tweet id INTEGER, hashtag TEXT)")
         self.cur.execute("CREATE TABLE IF NOT EXISTS reference(id INTEGER PRIMARY KEY ASC, tweet id INTEGER, reference TEXT)")
         # before exiting method
         self.db.commit()
+
+    def drop_tables(self):
+        if os.path.exists(self.path):
+            os.remove(self.path)
 
     def hashtagExists(self, hashtag):
         self.cur.execute('SELECT * FROM hashtags WHERE hashtag=?',[hashtag])
@@ -78,7 +81,11 @@ class TwitterDbOps:
         self.db.commit()
 
     def getTweets(self, count):
-        self.cur.execute("SELECT tweet FROM tweets ORDER BY date LIMIT ?",[count])
+        self.cur.execute("SELECT tweet FROM tweets ORDER BY date DESC LIMIT ?",[count])
+        return self.cur.fetchall()
+
+    def getTweetsForList(self, count):
+        self.cur.execute("SELECT * FROM tweets ORDER BY date DESC LIMIT ?",[count])
         return self.cur.fetchall()
 
     '''
