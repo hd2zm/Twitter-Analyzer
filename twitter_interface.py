@@ -66,7 +66,7 @@ class View(Frame):
         printTransUser = Button(self.parent, text="By User", command=self.govnah.printTransByUser)
         printTransUser.grid(row=3, column=2)
 
-        trans = Label(self.parent, text="Username: ")
+        trans = Label(self.parent, text="Search User: ")
         trans.grid(row=4, column=0)
 
         vcmd = (self.parent.register(self.valid), '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
@@ -86,7 +86,7 @@ class View(Frame):
         self.uinfo = Label(self.parent, text="")
         self.uinfo.grid(row=5, column=1, columnspan=2)
 
-        pathLabel = Label(self.parent, text="OneDir Path:")
+        pathLabel = Label(self.parent, text="Search Hashtag:")
         pathLabel.grid(row=7, column=0)
 
         self.path = self.govnah.path
@@ -107,10 +107,10 @@ class View(Frame):
         #sizeTButton.grid(row=9, column=2)
 
         original = Image.open("twitlogo.png")
-        resized = original.resize((100, 100), Image.ANTIALIAS)
+        resized = original.resize((150, 150), Image.ANTIALIAS)
         self.img = ImageTk.PhotoImage(resized)
         logoLabel = Label(self.parent, image=self.img)
-        logoLabel.grid(row=11, column=0)
+        logoLabel.grid(row=11, column=0, rowspan=3, columnspan=3)
 
         self.log.insert(END, "Howdy Admin, Welcome to the Server Interface \n\n")
 
