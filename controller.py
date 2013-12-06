@@ -10,20 +10,25 @@ import threading
 import Queue
 import os
 import twitter_interface
+import twitter_reader
 
 # The main class for this module. This class is the controller and defines the behaviours.
 class SInterface():
 
     def __init__(self):
-        self.prefs = twitter_db_ops.ServerPrefs()
-        self.path = self.prefs.getOption("path")
         # This is the model. The db class is a wrapper around database operations.
-        self.db = twitter_db_ops.DbOps(self.path)
         self.dview = None
         self.dioq = Queue.Queue()
         self.dioeq = Queue.Queue()
         self.root =Tk()
         self.root.geometry("1150x400+100+100")
+
+        self.consumerKey = 'jf1RuBnCqdQCNmLX0frLg'
+        self.consumerSecret = 'ThqOiemmb6u0unxovHEg9r9m4Lf0MaI30nqh3gwedI'
+        self.accessKey = '1106939719-KyTHxcGncJp0vgxTjH8P2AmaGQ13B5ert7YZR0t'
+        self.accessSecret = 'PqIuAYKTuKFfrg24CAhuwigh5R2udkl2Fls06mTaZLhXZ'
+        self.tweetReader = twitter_reader(self.consumerKey,self.consumerSecret,self.accessKey,self.accessSecret)
+
         #img = ImageTk.PhotoImage(file='img/logo50.png')
         #self.root.tk.call('wm', 'iconphoto', self.root._w, img)
         self.view = twitter_interface.View(self.root, self)
@@ -51,13 +56,17 @@ class SInterface():
     '''
 
     def searchUsername(self):
-        print self.view.username.get()
-        if self.view.username.cget('bg')=="white":
+
+        if self.tweetReader.lookup_user(self.view.username.get()):
             self.view.username.config(bg='green')
-        elif self.view.username.cget('bg')=="green":
+            try:
+                tweets=self.tweetReader.get_tweets_from_user(self.view.username.get(),self.view.numTweets.get())
+                self.tweetsToDB(tweets)
+            except twitter_reader.TwitterReaderException:
+                self.view.appnedText("Rate Limit Exceeded; Please wait 15 minutes.")
+
+        else:
             self.view.username.config(bg='red')
-        elif self.view.username.cget('bg')=="red":
-            self.view.username.config(bg='white')
 
     def listTweets(self):
         pass
@@ -71,6 +80,9 @@ class SInterface():
     def communicated(self):
         pass
 
+    def tweetsToDB(self,tweets):
+        for tweet in tweets:
+            self.dbops.createTweet(tweet['text'], tweet['created_at'])
     #call twitter stuff
     #def printUsersFileSpace(self):
     #    users = self.db.getUsersByUName()
