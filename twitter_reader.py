@@ -20,40 +20,64 @@ class TwitterReader:
         return self.twitter
 
     def get_user(self, user):
-        return self.API.get_user(user)
+        return self.twitter.show_user(user)
 
     def get_tweets_from_user(self, user, cnt=20):
+        lowest_id = sys.maxint
         suser = self.twitter.show_user(screen_name=user)
         if(cnt > suser['statuses_count']):
             cnt = suser['statuses_count']
+        print suser['statuses_count']
         #3000 is the rate limit for twitter API - 15 calls in 15 minutes (200 tweets per call)
         if(cnt > 3000):
             cnt = 3000
         tweets_requested = []
         if cnt <= 200:
-            timeline = self.twitter.get_home_timeline(screen_name=user, count=cnt)
+            timeline = self.twitter.get_user_timeline(screen_name=user, count=cnt)
             for tweet in timeline:
                 tweets_requested.append(tweet)
                 #self.dbops.createTweet(tweet['text'], tweet[''])
         elif cnt > 200:
             number_of_tweets = 0
             cntleft = cnt
+            cntleft-=200
+            timeline = self.twitter.get_user_timeline(screen_name=user, count=200)
+            for tweet in timeline:
+                if tweet['id'] < lowest_id:
+                    number_of_tweets+=1
+                    lowest_id = tweet['id']
+                    tweets_requested.append(tweet)
+                #self.dbops.createTweet(tweet['text'], tweet['created_at'])
+            lowest_id -= 1
+
             while(number_of_tweets < cnt):
                 if cntleft>200:
                     cntleft-=200
-                    timeline = self.twitter.get_home_timeline(screen_name=user, count=200, max_id=lowest_id)
+                    timeline = self.twitter.get_user_timeline(screen_name=user, count=200, max_id=lowest_id)
                 else:
-                    timeline = self.twitter.get_home_timeline(screen_name=user, count=cntleft, max_id=lowest_id)
+                    timeline = self.twitter.get_user_timeline(screen_name=user, count=cntleft, max_id=lowest_id)
                 for tweet in timeline:
-                    number_of_tweets+=1
                     if tweet['id'] < lowest_id:
+                        number_of_tweets+=1
                         lowest_id = tweet['id']
-                    tweets_requested.append(tweet)
-                    #self.dbops.createTweet(tweet['text'], tweet['created_at'])
+                        tweets_requested.append(tweet)
                 lowest_id -= 1
+                    #self.dbops.createTweet(tweet['text'], tweet['created_at'])
         else:
-            print "something strange happned"
+            print "something strange happened"
         return tweets_requested
 
     def parse_date(self, date):
         pass
+
+consumerKey = 'jf1RuBnCqdQCNmLX0frLg'
+consumerSecret = 'ThqOiemmb6u0unxovHEg9r9m4Lf0MaI30nqh3gwedI'
+accessKey = '1106939719-KyTHxcGncJp0vgxTjH8P2AmaGQ13B5ert7YZR0t'
+accessSecret = 'PqIuAYKTuKFfrg24CAhuwigh5R2udkl2Fls06mTaZLhXZ'
+
+twitter = TwitterReader(consumerKey, consumerSecret, accessKey, accessSecret)
+#print twitter.get_application_rate_limit_status()#['/statuses/home_timeline']
+tweets = twitter.get_tweets_from_user("KingJames", 405)
+for tweet in tweets:
+    print tweet['text']
+print len(tweets)
