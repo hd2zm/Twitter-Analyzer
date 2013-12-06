@@ -64,7 +64,7 @@ class TwitterDbOps:
 
         self.cur.execute('SELECT id FROM tweets WHERE tweet=?',[tweet])
         tweetid = self.cur.fetchone()[0]
-        print tweetid
+        #print tweetid
 
         self.createHashtag(tweetid, tweet)
         self.createReference(tweetid,tweet)
@@ -80,11 +80,21 @@ class TwitterDbOps:
         self.db.commit()
 
     def getTweets(self, count):
+        if count < 0:
+            count = 0
         self.cur.execute("SELECT tweet FROM tweets ORDER BY date DESC LIMIT ?",[count])
         return self.cur.fetchall()
 
-    def getTweetsForList(self, count):
+    def getTweetsForList(self, count,hasCount):
+        if not hasCount:
+            self.getTweetsForListNoCount()
+        if count < 0:
+            count = 0
         self.cur.execute("SELECT * FROM tweets ORDER BY date DESC LIMIT ?",[count])
+        return self.cur.fetchall()
+
+    def getTweetsForListNoCount(self):
+        self.cur.execute("SELECT * FROM tweets ORDER BY date DESC")
         return self.cur.fetchall()
 
     '''

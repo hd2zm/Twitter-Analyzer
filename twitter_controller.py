@@ -74,7 +74,10 @@ class SInterface():
 
     def listTweets(self):
         print self.view.numTweets.get()
-        tweets = self.dbops.getTweetsForList(self.view.numTweets.get())
+        if self.view.numTweets.get() == "":
+            tweets = self.dbops.getTweetsForList(self.view.numTweets.get(),False)
+        else:
+            tweets = self.dbops.getTweetsForList(self.view.numTweets.get(),True)
         for tweet in tweets:
             self.view.appendText(tweet[2])
             self.view.appendText(tweet[1] + "\n")
