@@ -48,8 +48,11 @@ class View(Frame):
         self.username = Entry(self.parent, width=14, bg="white")
         self.username.grid(row=1, column=1, columnspan=2)
 
-        searchUsername = Button(self.parent, text="     Search     ", command = self.govnah.searchUsername)
-        searchUsername.grid(row = 2, column =0, columnspan = 3)
+        searchUsername = Button(self.parent, text="Verify User", command = self.govnah.verifyUsername)
+        searchUsername.grid(row = 2, column =0, columnspan = 1)
+
+        searchUsername = Button(self.parent, text="Get Tweets", command = self.govnah.searchUsername)
+        searchUsername.grid(row = 2, column =2, columnspan = 1)
 
         ntlabel = Label(self.parent, text = "Number of Tweets:")
         ntlabel.grid(row = 3, column = 0)

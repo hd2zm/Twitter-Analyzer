@@ -55,23 +55,26 @@ class SInterface():
         self.view.appendText("The list of users, sorted by username. (Unique ID, username, password hash, registration timestamp)")
         self.printSanitizeDBstr(self.db.getUsersByUName())
     '''
-
-    def searchUsername(self):
-        #self.dbops.setup()
-        valid = False
+    def verifyUsername(self):
+        self.valid = False
         if self.tweetReader.lookup_user(self.view.username.get()):
             self.view.username.config(bg='green')
             self.view.appendText("User: %s is valid!" %self.view.username.get())
-            valid = True
+            self.valid = True
         else:
             self.view.username.config(bg='red')
-        if valid:
-            try:
-                tweets=self.tweetReader.get_tweets_from_user(self.view.username.get(),int(self.view.numTweets.get()))
-                #self.tweetsToDB(tweets)
-                self.view.appendText(str(len(tweets)))
-            except TwitterReaderException:
-                self.view.appendText("Rate Limit Exceeded; Please wait 15 minutes.")
+
+    def searchUsername(self):
+        try:
+            if self.valid:
+                try:
+                    tweets=self.tweetReader.get_tweets_from_user(self.view.username.get(),int(self.view.numTweets.get()))
+                    self.tweetsToDB(tweets)
+                    #self.view.appendText(str(len(tweets)))
+                except TwitterReaderException:
+                    self.view.appendText("Rate Limit Exceeded; Please wait 15 minutes.")
+        except AttributeError:
+            self.view.appendText("Please enter and verify a user.")
 
     def listTweets(self):
         #print self.view.numTweets.get()
@@ -97,16 +100,34 @@ class SInterface():
             hasharray.append((hashdict[n],n))
         hasharray.sort(reverse=True)
         self.view.appendText("Most used Hashtags:")
-        print hasharray
-        print hashdict
+        #print hasharray
+        #print hashdict
         for n in hasharray:
             self.view.appendText('%s used %d times'%(n[1],n[0]))
+        self.view.appendText('\n')
 
     def timeGraph(self):
         pass
 
     def communicated(self):
-        pass
+        refers = self.dbops.getReferences()
+        refdict = {}
+        refarray = []
+
+        for refer in refers:
+            if refer[0].lower() in refdict:
+                refdict[refer[0].lower()]= refdict[refer[0].lower()]+1
+            else:
+                refdict[refer[0].lower()] = 1
+        for n in refdict:
+            refarray.append((refdict[n],n))
+        refarray.sort(reverse=True)
+        self.view.appendText("Most used References:")
+        #print refarray
+        #print refdict
+        for n in refarray:
+            self.view.appendText('%s used %d times'%(n[1],n[0]))
+        self.view.appendText('\n')
 
     def tweetsToDB(self,tweets):
         for tweet in tweets:
