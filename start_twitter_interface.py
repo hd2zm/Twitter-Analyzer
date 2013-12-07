@@ -1,7 +1,7 @@
-import controller
+import twitter_controller
 
 def main():
-    s = controller.SInterface()
+    s = twitter_controller.SInterface()
 
 
 if __name__== '__main__':

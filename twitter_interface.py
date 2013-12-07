@@ -3,7 +3,7 @@ from ttk import Frame, Style
 import twitter_db_ops
 from idlelib.WidgetRedirector import WidgetRedirector
 import tkMessageBox
-from PIL import ImageTk
+from PIL import ImageTk, Image
 import subprocess
 import threading
 import Queue
@@ -19,8 +19,8 @@ class ReadOnlyText(Text):
 
 # This module implements a MVC model. This class is the View and contains the UI Stuff
 class View(Frame):
-    def __init__(self, parent, govnah):# govnah = siinterface
-        self.govnah = govnah
+    def __init__(self, parent, controller):# controller = siinterface
+        self.controller = controller
         Frame.__init__(self, parent)
         self.parent = parent
         self.initUI()
@@ -48,8 +48,11 @@ class View(Frame):
         self.username = Entry(self.parent, width=14, bg="white")
         self.username.grid(row=1, column=1, columnspan=2)
 
-        searchUsername = Button(self.parent, text="     Search     ", command = self.govnah.searchUsername)
-        searchUsername.grid(row = 2, column =0, columnspan = 3)
+        searchUsername = Button(self.parent, text="Verify User", command = self.controller.verifyUsername)
+        searchUsername.grid(row = 2, column =0, columnspan = 1)
+
+        searchUsername = Button(self.parent, text="Get Tweets", command = self.controller.getTweets)
+        searchUsername.grid(row = 2, column =2, columnspan = 1)
 
         ntlabel = Label(self.parent, text = "Number of Tweets:")
         ntlabel.grid(row = 3, column = 0)
@@ -72,110 +75,26 @@ class View(Frame):
         self.eDate.grid(row = 5, column = 2)
         self.eDate.insert(END,"MM/DD/YYYY")
 
-        searchUsername = Button(self.parent, text="List Tweets", command = self.govnah.listTweets, width = 20 )
+        searchUsername = Button(self.parent, text="List Tweets", command = self.controller.listTweets, width = 20 )
         searchUsername.grid(row = 6, column =0, columnspan = 3)
 
-        searchUsername = Button(self.parent, text="Most Used Hashtags", command = self.govnah.mostHash, width = 20 )
+        searchUsername = Button(self.parent, text="Most Used Hashtags", command = self.controller.mostHash, width = 20 )
         searchUsername.grid(row = 7, column =0, columnspan = 3)
 
-        searchUsername = Button(self.parent, text="Time graph", command = self.govnah.timeGraph, width = 20 )
+        searchUsername = Button(self.parent, text="Time graph", command = self.controller.timeGraph, width = 20 )
         searchUsername.grid(row = 8, column =0, columnspan = 3)
 
-        searchUsername = Button(self.parent, text="Most Communicated with", command = self.govnah.communicated, width = 20 )
+        searchUsername = Button(self.parent, text="Most Communicated with", command = self.controller.communicated, width = 20 )
         searchUsername.grid(row = 9, column =0, columnspan = 3 )
 
-        self.log.insert(END, "Howdy Admin, Welcome to the Server Interface \n\n")
+        original = Image.open("twitlogo.png")
+        resized = original.resize((125, 125), Image.ANTIALIAS)
+        self.img = ImageTk.PhotoImage(resized)
+        logoLabel = Label(self.parent, image=self.img)
+        logoLabel.grid(row=11, column=0, rowspan=3, columnspan=3)
 
-    def chngPath(self):
-        self.path = self.pathEntry.get()
-        self.govnah.changeDir(self.path)
-
-    def valid(self, d, i, P, s, S, v, V, W):
-        if not self.lock:
-            self.uname = P
-            if self.govnah.userExists(P):
-                self.goodMessage("Valid User")
-            else:
-                self.badMessage("User not Found")
-        return not self.lock
-
-    def goodMessage(self, msg):
-        self.uinfo.config(text=msg, fg="forest green")
-
-    def badMessage(self, msg):
-        self.uinfo.config(text=msg, fg="red")
-
-    def alert(self):
-        top = Toplevel()
-        top.title("Are you sure?")
-
-        msg = Message(top, text="Are you sure?")
-        msg.pack()
-
-        button = Button(top, text="Dismiss", command=top.destroy)
-        button.pack()
-
-        self.center(top)
-
-    def areYouSureDelete(self):
-        return tkMessageBox.askyesno("Confirmation", "Are you sure you want delete " + self.uname)
-
-    def delUser(self):
-        if self.govnah.userExists(self.uname):
-            self.lock = True
-            if self.areYouSureDelete():
-                self.govnah.delUser(str(self.uname))
-                self.appendText("User: " + self.uname + " successfully deleted.")
-                self.appendText("")
-            self.lock = False
-
+        self.log.insert(END, "Welcome to the Twitter Analyzer! \n\n")
 
     def appendText(self, text):
-        self.log.insert(END, str(text) + "\n")
+        self.log.insert(END, str(text.encode("utf-8")) + "\n")
         self.log.see(END)
-
-    def getNewPw(self):
-        if self.govnah.userExists(self.uname):
-            self.unameforpwch = self.uname
-            self.lock = True
-            self.top = Toplevel()
-            self.top.protocol('WM_DELETE_WINDOW', self.closePwWindow)
-            self.top.title = "Change Password"
-            l = Label(self.top, text="Enter a new Password for user: " + self.unameforpwch)
-            l.grid(row=0, columnspan=2)
-            self.entry = Entry(self.top, width=20, bg="white")
-            self.entry.grid(row=1, columnspan=2)
-            n = Button(self.top, text="Cancel", command=self.closePwWindow)
-            n.grid(row=2, column=0)
-            y = Button(self.top, text="Proceed", command=self.confirmPwChange)
-            y.grid(row=2, column=1)
-            self.center(self.top)
-
-    def closePwWindow(self):
-        self.lock = False
-        self.top.destroy()
-        self.appendText("Password for " + self.unameforpwch + " not changed")
-        self.appendText("")
-
-    def confirmPwChange(self):
-        pw = self.entry.get()
-        if len(pw) > 0:
-            self.govnah.chUserPass(self.unameforpwch, pw)
-            self.top.destroy()
-            self.appendText("Password for " + self.unameforpwch + " successfully changed to " + pw)
-            self.appendText("")
-            self.lock = False
-
-    def center(self, win):
-        win.withdraw()
-        win.update_idletasks()  # Update "requested size" from geometry manager
-
-        x = (win.winfo_screenwidth() - self.parent.winfo_reqwidth()) / 2
-        y = (win.winfo_screenheight() - self.parent.winfo_reqheight()) / 2
-        win.geometry("+%d+%d" % (x, y))
-
-        # This seems to draw the window frame immediately, so only call deiconify()
-        # after setting correct window position
-        win.deiconify()
-
-# This module implements a MVC model. This class is the View and contains the UI Stuff
