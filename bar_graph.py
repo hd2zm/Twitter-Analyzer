@@ -21,7 +21,7 @@ class BarGraph(PlotGraph):
 
 # add some
         ax.set_ylabel('Occurance')
-        ax.set_title(('Frequence of %s in given tweet collection')%name)
+        ax.set_title(('Frequency of %s in given tweet collection')%name)
         ax.set_xticks(ind+width)
         ax.set_xticklabels( tuple(narray) )
 
