@@ -23,7 +23,7 @@ class TwitterDbOps:
         self.setup()
 
     def setup(self):
-        self.drop_tables()
+        #self.drop_tables()
         self.db = sqlite3.connect(self.path)
         # Get a cursor object for operations
         self.cur = self.db.cursor()
@@ -91,9 +91,9 @@ class TwitterDbOps:
         self.cur.execute("SELECT date from tweets ORDER BY date DESC")
 
     def getHashtags(self):
-        self.cur.execute("SELECT hashtag FROM hashtags")
+        self.cur.execute("SELECT * FROM hashtags")
         return self.cur.fetchall()
 
     def getReferences(self):
-        self.cur.execute("SELECT reference FROM reference")
+        self.cur.execute("SELECT * FROM reference")
         return self.cur.fetchall()

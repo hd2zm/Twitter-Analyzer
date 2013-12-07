@@ -51,7 +51,7 @@ class SInterface():
         if self.tweetReader.lookup_user(self.view.username.get()):
             self.view.username.config(bg='green')
             self.view.appendText("User: %s is valid!" %self.view.username.get())
-            self.valid = True
+            #self.valid = True
         else:
             self.view.username.config(bg='red')
 
@@ -98,10 +98,10 @@ class SInterface():
         hasharray = []
 
         for hash in hashes:
-            if hash[0].lower() in hashdict:
-                hashdict[hash[0].lower()]= hashdict[hash[0].lower()]+1
+            if hash[2].lower() in hashdict:
+                hashdict[hash[2].lower()]= hashdict[hash[2].lower()]+1
             else:
-                hashdict[hash[0].lower()] = 1
+                hashdict[hash[2].lower()] = 1
         for n in hashdict:
             hasharray.append((hashdict[n],n))
         hasharray.sort(reverse=True)
@@ -114,14 +114,17 @@ class SInterface():
         pass
 
     def communicated(self):
-        refers = self.dbops.getReferences()
+        if self.view.numTweets.get() == "":
+            refers = self.dbops.getReferences()
+        else:
+            refers = self.getRefrenceCount(self.view.numTweets.get())
         refdict = {}
         refarray = []
         for refer in refers:
-            if refer[0].lower() in refdict:
-                refdict[refer[0].lower()]= refdict[refer[0].lower()]+1
+            if refer[2].lower() in refdict:
+                refdict[refer[2].lower()]= refdict[refer[2].lower()]+1
             else:
-                refdict[refer[0].lower()] = 1
+                refdict[refer[2].lower()] = 1
         for n in refdict:
             refarray.append((refdict[n],n))
         refarray.sort(reverse=True)
@@ -146,6 +149,18 @@ class SInterface():
             for hash in hashes:
                 if tweet[0] == hash[1]:
                     countedHashes.append(hash)
+        return countedHashes
+
+    def getRefrenceCount(self,count):
+        tweets = self.dbops.getTweets(count,True)
+        refers = self.dbops.getReferences()
+        countedRefers = []
+
+        for tweet in tweets:
+            for refer in refers:
+                if tweet[0] == refer[1]:
+                    countedRefers.append(refer)
+        return countedRefers
 
     def date_filter(self, tweets):
         filtered_tweets = []
