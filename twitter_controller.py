@@ -28,7 +28,7 @@ class SInterface():
         self.root =Tk()
         self.root.geometry("1150x400+100+100")
 
-        '''
+
         self.consumerKey = 'IFycAuEiZOo7mNOmNuW1lw'
         self.consumerSecret = 'E8MuIeoAKEWhLfbVDJAYyVL5sw9XIlEIbchqIotjxsE'
         self.accessKey = '35871247-89JyKTkbtn9L9V4fmkMMD7qHuOE39leWxJunutcSn'
@@ -38,7 +38,7 @@ class SInterface():
         self.consumerSecret = 'ThqOiemmb6u0unxovHEg9r9m4Lf0MaI30nqh3gwedI'
         self.accessKey = '1106939719-KyTHxcGncJp0vgxTjH8P2AmaGQ13B5ert7YZR0t'
         self.accessSecret = 'PqIuAYKTuKFfrg24CAhuwigh5R2udkl2Fls06mTaZLhXZ'
-
+        '''
         self.tweetReader = TwitterReader(self.consumerKey,self.consumerSecret,self.accessKey,self.accessSecret)
 
         self.view = View(self.root, self)
@@ -91,8 +91,6 @@ class SInterface():
         graph_hashes = []
         graph_hash_frequencies = []
         num_bars = 5
-        if num_bars > int(self.view.numTweets.get()):
-            num_bars = int(self.view.numTweets.get())
         if hashes == None:
             return
         for hash in hashes:
@@ -154,7 +152,6 @@ class SInterface():
         num_bars = 5
         if refers == None:
             return
-
         for refer in refers:
             if refer[2].lower() in refdict:
                 refdict[refer[2].lower()]= refdict[refer[2].lower()]+1

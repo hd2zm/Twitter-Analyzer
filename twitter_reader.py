@@ -49,7 +49,6 @@ class TwitterReader:
                 cntleft = cnt
                 cntleft-=200
                 timeline = self.twitter.get_user_timeline(screen_name=user, count=200)
-                print cnt
                 for tweet in timeline:
                     if tweet['id'] < lowest_id:
                         number_of_tweets+=1
@@ -72,7 +71,6 @@ class TwitterReader:
                     lowest_id -= 1
             else:
                 print "something strange happened"
-            print len(tweets_requested)
             return tweets_requested
         except TwythonRateLimitError:
             raise TwitterReaderException
