@@ -129,8 +129,8 @@ class SInterface():
             return
 
         for tweet in tweets:
-            tweet[2] = datetime.strptime(tweet[2], '%Y-%m-%d %H:%M:%S')
-            day  = datetime(tweet[2].year,tweet[2].month,tweet[2].day)
+            day = datetime.strptime(tweet[2], '%Y-%m-%d %H:%M:%S')
+            day  = datetime(day.year,day.month,day.day)
             if day in tweetdict:
                 tweetdict[day]= tweetdict[day]+1
             else:

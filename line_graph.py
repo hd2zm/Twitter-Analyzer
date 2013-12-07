@@ -17,10 +17,11 @@ class LineGraph(PlotGraph):
         #r = r[-30:]  # get the last 30 days
 
         # first we'll do it the default way, with gaps on weekends
+        '''
         fig, ax = plt.subplots()
         ax.plot(date, val, 'o-')
         fig.autofmt_xdate()
-
+        '''
         # next we'll write a custom formatter
         N = len(date)
         ind = np.arange(N)  # the evenly spaced plot indices
@@ -29,7 +30,7 @@ class LineGraph(PlotGraph):
             thisind = np.clip(int(x+0.5), 0, N-1)
             #year,month,day = str(date[thisind]).split('-')
             #return (datetime.date(int(year), int(month), int(day))).strftime('%Y-%m-%d')
-            return date[thisind]
+            return date[thisind].strftime("%m/%d/%Y")
 
         fig, ax = plt.subplots()
         ax.plot(ind, val, 'o-')
