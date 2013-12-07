@@ -16,6 +16,7 @@ from twitter_interface import *
 from twitter_reader import *
 from twitter_db_ops import *
 from datetime import datetime
+import line_graph
 
 # The main class for this module. This class is the controller and defines the behaviours.
 class SInterface():
@@ -88,6 +89,7 @@ class SInterface():
             if not self.view.numTweets.get()=='' and int(self.view.numTweets.get()) > len(tweets):
                 self.view.appendText("There are only %d tweets in the database" %(len(tweets)))
                 return
+        tweets = self.date_filter(tweets)
         for tweet in tweets:
             self.view.appendText(tweet[2])
             self.view.appendText(tweet[1] + "\n")
@@ -115,7 +117,34 @@ class SInterface():
         self.view.appendText('\n')
 
     def timeGraph(self):
-        pass
+        tweets = self.dbops.getTweets(self.view.numTweets.get(),not not self.view.numTweets.get())
+        if not not self.view.numTweets.get() and int(self.view.numTweets.get()) > len(tweets):
+            self.view.appendText("There are only %d tweets in the database" %(len(tweets)))
+            return
+        tweets = self.date_filter(tweets)
+        tweetdict = {}
+        tweetarray = []
+
+        if tweets == None:
+            return
+
+        for tweet in tweets:
+            tweet[2] = datetime.strptime(tweet[2], '%Y-%m-%d %H:%M:%S')
+            day  = datetime(tweet[2].year,tweet[2].month,tweet[2].day)
+            if day in tweetdict:
+                tweetdict[day]= tweetdict[day]+1
+            else:
+                tweetdict[day] = 1
+        for n in tweetdict:
+            tweetarray.append((n,tweetdict[n]))
+        tweetarray.sort()
+        days = []
+        freq = []
+        for n in tweetarray:
+            days.append(n[0])
+            freq.append(n[1])
+        lg = line_graph.LineGraph()
+        lg.plot(days,freq)
 
     def communicated(self):
         if self.view.numTweets.get() == "":
@@ -153,6 +182,7 @@ class SInterface():
         if not self.view.numTweets.get()=='' and int(self.view.numTweets.get()) > len(tweets):
             self.view.appendText("There are only %d tweets in the database" %(len(tweets)))
             return
+        tweets = self.date_filter(tweets)
         hashes = self.dbops.getHashtags()
         countedHashes = []
 
@@ -167,6 +197,7 @@ class SInterface():
         if not self.view.numTweets.get()=='' and int(self.view.numTweets.get()) > len(tweets):
             self.view.appendText("There are only %d tweets in the database" %(len(tweets)))
             return
+        tweets = self.date_filter(tweets)
         refers = self.dbops.getReferences()
         countedRefers = []
 
@@ -178,18 +209,20 @@ class SInterface():
 
     def date_filter(self, tweets):
         filtered_tweets = []
-        date1 = re.findall('\d{1,2}/\d{1,2}/\d{4}', self.view.sDate.get())[0]
-        date2 = re.findall('\d{1,2}/\d{1,2}/\d{4}', self.view.eDate.get())[0]
+        date1 = re.findall('\d{1,2}/\d{1,2}/\d{4}', self.view.sDate.get())
+        date2 = re.findall('\d{1,2}/\d{1,2}/\d{4}', self.view.eDate.get())
         if not date1:
             date1 = datetime(1970,1,1)
         else:
+            date1 = date1[0]
             month, day, year = date1.split('/')
             date1 = datetime(int(year), int(month), int(day))
         if not date2:
             date2 = date2 = datetime.now()
         else:
-            month, day, year = date1.split('/')
-            date1 = datetime(year, month, day, 23, 59, 59)
+            date2=date2[0]
+            month, day, year = date2.split('/')
+            date2 = datetime(int(year), int(month), int(day), 23, 59, 59)
         for tweet in tweets:
             tweet_date = datetime.strptime(tweet[2], '%Y-%m-%d %H:%M:%S')
             if date1 <= tweet_date <= date2:
