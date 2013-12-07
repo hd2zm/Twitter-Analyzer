@@ -24,10 +24,17 @@ class SInterface():
         self.root =Tk()
         self.root.geometry("1150x400+100+100")
 
+        '''
+        self.consumerKey = 'IFycAuEiZOo7mNOmNuW1lw'
+        self.consumerSecret = 'E8MuIeoAKEWhLfbVDJAYyVL5sw9XIlEIbchqIotjxsE'
+        self.accessKey = '35871247-89JyKTkbtn9L9V4fmkMMD7qHuOE39leWxJunutcSn'
+        self.accessSecret = 'c6lxvaPOStYBWplXGZdW0AbhL00bMwVDReJflOc902fxg'
+        '''
         self.consumerKey = 'jf1RuBnCqdQCNmLX0frLg'
         self.consumerSecret = 'ThqOiemmb6u0unxovHEg9r9m4Lf0MaI30nqh3gwedI'
         self.accessKey = '1106939719-KyTHxcGncJp0vgxTjH8P2AmaGQ13B5ert7YZR0t'
         self.accessSecret = 'PqIuAYKTuKFfrg24CAhuwigh5R2udkl2Fls06mTaZLhXZ'
+
         self.tweetReader = TwitterReader(self.consumerKey,self.consumerSecret,self.accessKey,self.accessSecret)
 
         self.view = View(self.root, self)
@@ -37,11 +44,6 @@ class SInterface():
     def close(self):
         self.root.destroy()
 
-    '''
-    def printUsersByName(self):
-        self.view.appendText("The list of users, sorted by username. (Unique ID, username, password hash, registration timestamp)")
-        self.printSanitizeDBstr(self.db.getUsersByUName())
-    '''
     def verifyUsername(self):
         self.valid = False
         if self.tweetReader.lookup_user(self.view.username.get()):
@@ -66,15 +68,18 @@ class SInterface():
     def listTweets(self):
         #print self.view.numTweets.get()
         if self.view.numTweets.get() == "":
-            tweets = self.dbops.getTweetsForList(self.view.numTweets.get(),False)
+            tweets = self.dbops.getTweets(self.view.numTweets.get(),False)
         else:
-            tweets = self.dbops.getTweetsForList(self.view.numTweets.get(),True)
+            tweets = self.dbops.getTweets(self.view.numTweets.get(),True)
         for tweet in tweets:
             self.view.appendText(tweet[2])
             self.view.appendText(tweet[1] + "\n")
 
     def mostHash(self):
-        hashes = self.dbops.getHashtags()
+        if self.view.numTweets.get() == "":
+            hashes = self.dbops.getHashtags()
+        else:
+            hashes = self.getHastagsCount(self.view.numTweets.get())
         hashdict = {}
         hasharray = []
 
@@ -114,4 +119,15 @@ class SInterface():
     def tweetsToDB(self,tweets):
         for tweet in tweets:
             self.dbops.createTweet(tweet['text'], self.tweetReader.parse_date(tweet['created_at']))
+
+    def getHastagsCount(self,count):
+        tweets = self.dbops.getTweets(count,True)
+        hashes = self.dbops.getHashtags()
+        countedHashes = []
+
+        for tweet in tweets:
+            for hash in hashes:
+                if tweet[0] == hash[1]:
+                    countedHashes.append(hash)
+
     #call twitter stuff

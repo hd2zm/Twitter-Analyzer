@@ -75,21 +75,15 @@ class TwitterDbOps:
             self.cur.execute("INSERT INTO reference VALUES(?,?,?)",[None,tweetid,reg])
         self.db.commit()
 
-    def getTweets(self, count):
-        if count < 0:
-            count = 0
-        self.cur.execute("SELECT tweet FROM tweets ORDER BY date DESC LIMIT ?",[count])
-        return self.cur.fetchall()
-
-    def getTweetsForList(self, count,hasCount):
+    def getTweets(self, count,hasCount):
         if not hasCount:
-            self.getTweetsForListNoCount()
+            self.getTweetsNoCount()
         if count < 0:
             count = 0
         self.cur.execute("SELECT * FROM tweets ORDER BY date DESC LIMIT ?",[count])
         return self.cur.fetchall()
 
-    def getTweetsForListNoCount(self):
+    def getTweetsNoCount(self):
         self.cur.execute("SELECT * FROM tweets ORDER BY date DESC")
         return self.cur.fetchall()
 
