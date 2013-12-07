@@ -53,7 +53,7 @@ class SInterface():
         if self.tweetReader.lookup_user(self.view.username.get()):
             self.view.username.config(bg='green')
             self.view.appendText("User: %s is valid!" %self.view.username.get())
-            self.valid = True
+            #self.valid = True
         else:
             self.view.username.config(bg='red')
         self.view.appendLine()
@@ -74,13 +74,10 @@ class SInterface():
 
     def listTweets(self):
         #print self.view.numTweets.get()
-        if self.view.numTweets.get() == "":
-            tweets = self.dbops.getTweets(self.view.numTweets.get(),False)
-        else:
-            tweets = self.dbops.getTweets(self.view.numTweets.get(),True)
-            if not self.view.numTweets.get()=='' and int(self.view.numTweets.get()) > len(tweets):
-                self.view.appendText("There are only %d tweets in the database" %(len(tweets)))
-                return
+        tweets = self.dbops.getTweets(self.view.numTweets.get())
+        if not self.view.numTweets.get()=='' and int(self.view.numTweets.get()) > len(tweets):
+            self.view.appendText("There are only %d tweets in the database" %(len(tweets)))
+            return
         tweets = self.date_filter(tweets)
         for tweet in tweets:
             self.view.appendText(tweet[2])
@@ -88,10 +85,7 @@ class SInterface():
         self.view.appendLine()
 
     def mostHash(self):
-        if self.view.numTweets.get() == "":
-            hashes = self.dbops.getHashtags()
-        else:
-            hashes = self.getHastagsCount(self.view.numTweets.get())
+        hashes = self.getHastagsCount(self.view.numTweets.get())
         hashdict = {}
         hasharray = []
         graph_hashes = []
@@ -109,14 +103,14 @@ class SInterface():
         for hashtag in hashdict:
             hasharray.append((hashdict[hashtag],hashtag))
         hasharray.sort(reverse=True)
+        self.view.appendText("Most Used Hashtags:")
+        for n in hasharray:
+            self.view.appendText('%s used %d times'%(n[1],n[0]))
         for x in range(num_bars):
             graph_hashes.append(hasharray[x][1])
             graph_hash_frequencies.append(hasharray[x][0])
         hash_bar_graph = bar_graph.BarGraph()
         hash_bar_graph.plot(graph_hash_frequencies, graph_hashes, "most used hashtags")
-        self.view.appendText("Most Used Hashtags:")
-        for n in hasharray:
-            self.view.appendText('%s used %d times'%(n[1],n[0]))
         self.view.appendLine()
 
     def timeGraph(self):
@@ -150,10 +144,7 @@ class SInterface():
         lg.plot(days,freq)
 
     def communicated(self):
-        if self.view.numTweets.get() == "":
-            refers = self.dbops.getReferences()
-        else:
-            refers = self.getReferenceCount(self.view.numTweets.get())
+        refers = self.getReferenceCount(self.view.numTweets.get())
         refdict = {}
         refarray = []
         graph_reference_frequencies = []
@@ -172,15 +163,15 @@ class SInterface():
         for n in refdict:
             refarray.append((refdict[n],n))
         refarray.sort(reverse=True)
+        self.view.appendText("Most Used References:")
+        for n in refarray:
+            self.view.appendText('%s used %d times'%(n[1],n[0]))
+        self.view.appendLine()
         for x in range(num_bars):
             graph_references.append(refarray[x][1])
             graph_reference_frequencies.append(refarray[x][0])
         reference_bar_graph = bar_graph.BarGraph()
         reference_bar_graph.plot(graph_reference_frequencies, graph_references, "most used references")
-        self.view.appendText("Most Used References:")
-        for n in refarray:
-            self.view.appendText('%s used %d times'%(n[1],n[0]))
-        self.view.appendLine()
 
     def tweetsToDB(self,tweets):
         tweet_count = 1
@@ -190,7 +181,9 @@ class SInterface():
 
 
     def getHastagsCount(self,count):
-        tweets = self.dbops.getTweets(count,True)
+        if not count:
+            count ='3000'
+        tweets = self.dbops.getTweets(count)
         if not self.view.numTweets.get()=='' and int(self.view.numTweets.get()) > len(tweets):
             self.view.appendText("There are only %d tweets in the database" %(len(tweets)))
             return
@@ -205,7 +198,9 @@ class SInterface():
         return countedHashes
 
     def getReferenceCount(self,count):
-        tweets = self.dbops.getTweets(count,True)
+        if not count:
+            count ='3000'
+        tweets = self.dbops.getTweets(count)
         if not self.view.numTweets.get()=='' and int(self.view.numTweets.get()) > len(tweets):
             self.view.appendText("There are only %d tweets in the database" %(len(tweets)))
             return

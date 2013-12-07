@@ -23,7 +23,7 @@ class TwitterDbOps:
         self.setup()
 
     def setup(self):
-        self.drop_tables()
+        #self.drop_tables()
         self.db = sqlite3.connect(self.path)
         # Get a cursor object for operations
         self.cur = self.db.cursor()
@@ -75,13 +75,14 @@ class TwitterDbOps:
             self.cur.execute("INSERT INTO reference VALUES(?,?,?)",[None,tweetid,reg])
         self.db.commit()
 
-    def getTweets(self, count,hasCount):
-        if not hasCount:
+    def getTweets(self, count):
+        if not count:
             self.getTweetsNoCount()
-        if count < 0:
-            count = 0
-        self.cur.execute("SELECT * FROM tweets ORDER BY date DESC LIMIT ?",[count])
-        return self.cur.fetchall()
+        else:
+            if count < 0:
+                count = 0
+            self.cur.execute("SELECT * FROM tweets ORDER BY date DESC LIMIT ?",[int(count)+1])
+            return self.cur.fetchall()
 
     def getTweetsNoCount(self):
         self.cur.execute("SELECT * FROM tweets ORDER BY date DESC")
