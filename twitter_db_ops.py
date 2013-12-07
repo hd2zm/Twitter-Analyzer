@@ -23,10 +23,10 @@ class TwitterDbOps:
         self.setup()
 
     def setup(self):
-        #self.drop_tables()
         self.db = sqlite3.connect(self.path)
         # Get a cursor object for operations
         self.cur = self.db.cursor()
+        self.drop_tables()
         # A method to make sure that all our tables in the database are initialized and ready to go
         self.cur.execute("CREATE TABLE IF NOT EXISTS tweets(id INTEGER PRIMARY KEY ASC, tweet TEXT, date DATE)")
         self.cur.execute("CREATE TABLE IF NOT EXISTS hashtags(id INTEGER PRIMARY KEY ASC, tweet id INTEGER, hashtag TEXT)")
@@ -35,8 +35,11 @@ class TwitterDbOps:
         self.db.commit()
 
     def drop_tables(self):
-        if os.path.exists(self.path):
-            os.remove(self.path)
+        self.cur.execute("DROP TABLE IF EXISTS tweets")
+        self.cur.execute("DROP TABLE IF EXISTS hashtags")
+        self.cur.execute("DROP TABLE IF EXISTS reference")
+        #if os.path.exists(self.path):
+            #os.remove(self.path)
 
     def hashtagExists(self, hashtag):
         self.cur.execute('SELECT * FROM hashtags WHERE hashtag=?',[hashtag])
@@ -77,11 +80,11 @@ class TwitterDbOps:
 
     def getTweets(self, count):
         if not count:
-            self.getTweetsNoCount()
+            return self.getTweetsNoCount()
         else:
             if count < 0:
                 count = 0
-            self.cur.execute("SELECT * FROM tweets ORDER BY date DESC LIMIT ?",[int(count)+1])
+            self.cur.execute("SELECT * FROM tweets ORDER BY date DESC LIMIT ?",[int(count)])
             return self.cur.fetchall()
 
     def getTweetsNoCount(self):

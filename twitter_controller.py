@@ -53,7 +53,7 @@ class SInterface():
         if self.tweetReader.lookup_user(self.view.username.get()):
             self.view.username.config(bg='green')
             self.view.appendText("User: %s is valid!" %self.view.username.get())
-            #self.valid = True
+            self.valid = True
         else:
             self.view.username.config(bg='red')
         self.view.appendLine()
@@ -91,8 +91,8 @@ class SInterface():
         graph_hashes = []
         graph_hash_frequencies = []
         num_bars = 5
-        if num_bars > self.view.numTweets.get():
-            num_bars = self.view.numTweets.get()
+        if num_bars > int(self.view.numTweets.get()):
+            num_bars = int(self.view.numTweets.get())
         if hashes == None:
             return
         for hash in hashes:
@@ -107,6 +107,8 @@ class SInterface():
         for n in hasharray:
             self.view.appendText('%s used %d times'%(n[1],n[0]))
         self.view.appendLine()
+        if num_bars>len(hasharray):
+            num_bars=len(hasharray)
         for x in range(num_bars):
             graph_hashes.append(hasharray[x][1])
             graph_hash_frequencies.append(hasharray[x][0])
@@ -114,7 +116,7 @@ class SInterface():
         hash_bar_graph.plot(graph_hash_frequencies, graph_hashes, "most used hashtags")
 
     def timeGraph(self):
-        tweets = self.dbops.getTweets(self.view.numTweets.get(),not not self.view.numTweets.get())
+        tweets = self.dbops.getTweets(self.view.numTweets.get())
         if not not self.view.numTweets.get() and int(self.view.numTweets.get()) > len(tweets):
             self.view.appendText("There are only %d tweets in the database" %(len(tweets)))
             return
@@ -150,8 +152,6 @@ class SInterface():
         graph_reference_frequencies = []
         graph_references = []
         num_bars = 5
-        if num_bars > self.view.numTweets.get():
-            num_bars = self.view.numTweets.get()
         if refers == None:
             return
 
@@ -167,6 +167,8 @@ class SInterface():
         for n in refarray:
             self.view.appendText('%s used %d times'%(n[1],n[0]))
         self.view.appendLine()
+        if num_bars>len(refarray):
+            num_bars=len(refarray)
         for x in range(num_bars):
             graph_references.append(refarray[x][1])
             graph_reference_frequencies.append(refarray[x][0])
