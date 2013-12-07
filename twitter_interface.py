@@ -98,3 +98,7 @@ class View(Frame):
     def appendText(self, text):
         self.log.insert(END, str(text.encode("utf-8")) + "\n")
         self.log.see(END)
+
+    def appendLine(self):
+        self.appendText('='*100)
+        self.appendText('\n')

@@ -11,21 +11,13 @@ import datetime
 
 class BarGraph(PlotGraph):
     def plot(self, values, narray, name):
-
         N = len(values)
-        std = []
-        i = 0
-        while (i <N):
-            std.append(1)
-            i=i+1
-
-        std = tuple(std)
 
         ind = np.arange(N)  # the x locations for the groups
         width = 0.05       # the width of the bars
 
         fig, ax = plt.subplots()
-        rects1 = ax.bar(ind, tuple(values), width, color='r', yerr=std)
+        rects1 = ax.bar(ind, tuple(values), width, color='r')
 
 # add some
         ax.set_ylabel('Occurance')

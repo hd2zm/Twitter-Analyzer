@@ -8,19 +8,12 @@ import matplotlib.pyplot as plt
 
 N = 10
 menMeans = (20, 35, 30, 35, 27, 33, 22, 44, 66, 12)
-menStd = []
-i = 0
-while (i <N):
-    menStd.append(1)
-    i=i+1
-
-menStd = tuple(menStd)
 
 ind = np.arange(N)  # the x locations for the groups
 width = 0.05       # the width of the bars
 
 fig, ax = plt.subplots()
-rects1 = ax.bar(ind, menMeans, width, color='r', yerr=menStd)
+rects1 = ax.bar(ind, menMeans, width, color='r')
 
 #womenMeans = (25, 32, 34, 20, 25)
 #womenStd =   (3, 5, 2, 3, 3)

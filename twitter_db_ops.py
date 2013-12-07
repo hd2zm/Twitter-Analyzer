@@ -23,7 +23,7 @@ class TwitterDbOps:
         self.setup()
 
     def setup(self):
-        #self.drop_tables()
+        self.drop_tables()
         self.db = sqlite3.connect(self.path)
         # Get a cursor object for operations
         self.cur = self.db.cursor()
