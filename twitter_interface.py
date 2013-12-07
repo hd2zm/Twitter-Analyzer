@@ -3,7 +3,7 @@ from ttk import Frame, Style
 import twitter_db_ops
 from idlelib.WidgetRedirector import WidgetRedirector
 import tkMessageBox
-from PIL import ImageTk
+from PIL import ImageTk, Image
 import subprocess
 import threading
 import Queue
@@ -84,7 +84,13 @@ class View(Frame):
         searchUsername = Button(self.parent, text="Most Communicated with", command = self.govnah.communicated, width = 20 )
         searchUsername.grid(row = 9, column =0, columnspan = 3 )
 
-        self.log.insert(END, "Howdy Admin, Welcome to the Server Interface \n\n")
+        original = Image.open("twitlogo.png")
+        resized = original.resize((125, 125), Image.ANTIALIAS)
+        self.img = ImageTk.PhotoImage(resized)
+        logoLabel = Label(self.parent, image=self.img)
+        logoLabel.grid(row=11, column=0, rowspan=3, columnspan=3)
+
+        self.log.insert(END, "Welcome to the Twitter Analyzer! \n\n")
 
     def chngPath(self):
         self.path = self.pathEntry.get()
