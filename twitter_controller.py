@@ -11,6 +11,7 @@ import subprocess
 import threading
 import Queue
 import os
+from re import *
 from twitter_interface import *
 from twitter_reader import *
 from twitter_db_ops import *
@@ -54,20 +55,29 @@ class SInterface():
         else:
             self.view.username.config(bg='red')
 
-    def getTweets(self):
+    def startGetTweets(self):
+        self.view.appendText("Get tweets and inputting into database...")
+
+    def getTweetsHelper(self):
         try:
             if self.valid:
                 try:
                     self.dbops.setup()
-                    self.view.appendText("Get tweets and inputting into database...")
                     tweets=self.tweetReader.get_tweets_from_user(self.view.username.get(),int(self.view.numTweets.get()))
                     self.tweetsToDB(tweets)
                     #self.view.appendText(str(len(tweets)))
-                    self.view.appendText("Done getting tweets!")
                 except TwitterReaderException:
                     self.view.appendText("Rate Limit Exceeded; Please wait 15 minutes.")
         except AttributeError:
             self.view.appendText("Please enter and verify a user.")
+
+    def finishGetTweets(self):
+        self.view.appendText("Done getting tweets!")
+
+    def getTweets(self):
+        self.startGetTweets()
+        self.getTweetsHelper()
+        self.finishGetTweets()
 
     def listTweets(self):
         #print self.view.numTweets.get()
@@ -137,7 +147,24 @@ class SInterface():
                 if tweet[0] == hash[1]:
                     countedHashes.append(hash)
 
-    def date_filter(self, tweet_date, date1=datetime(1970,1,1), date2=datetime.now()):
-        return date1 <  tweet_date < date2
-
+    def date_filter(self, tweets):
+        filtered_tweets = []
+        date1 = re.findall('\d{1,2}/\d{1,2}/\d{4}', self.view.sDate.get())[0]
+        date2 = re.findall('\d{1,2}/\d{1,2}/\d{4}', self.view.eDate.get())[0]
+        if not date1:
+            date1 = datetime(1970,1,1)
+        else:
+            month, day, year = date1.split('/')
+            date1 = datetime(int(year), int(month), int(day))
+        if not date2:
+            date2 = date2 = datetime.now()
+        else:
+            month, day, year = date1.split('/')
+            date1 = datetime(year, month, day, 23, 59, 59)
+        for tweet in tweets:
+            tweet_date = datetime.strptime(tweet[2], '%Y-%m-%d %H:%M:%S')
+            if date1 <= tweet_date <= date2:
+                filtered_tweets.append(tweet)
+        return filtered_tweets
+                
     #call twitter stuff
