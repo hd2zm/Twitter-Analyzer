@@ -106,12 +106,12 @@ class SInterface():
         self.view.appendText("Most Used Hashtags:")
         for n in hasharray:
             self.view.appendText('%s used %d times'%(n[1],n[0]))
+        self.view.appendLine()
         for x in range(num_bars):
             graph_hashes.append(hasharray[x][1])
             graph_hash_frequencies.append(hasharray[x][0])
         hash_bar_graph = bar_graph.BarGraph()
         hash_bar_graph.plot(graph_hash_frequencies, graph_hashes, "most used hashtags")
-        self.view.appendLine()
 
     def timeGraph(self):
         tweets = self.dbops.getTweets(self.view.numTweets.get(),not not self.view.numTweets.get())
