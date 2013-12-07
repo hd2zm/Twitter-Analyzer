@@ -49,6 +49,7 @@ class TwitterReader:
                 cntleft = cnt
                 cntleft-=200
                 timeline = self.twitter.get_user_timeline(screen_name=user, count=200)
+                print cnt
                 for tweet in timeline:
                     if tweet['id'] < lowest_id:
                         number_of_tweets+=1
@@ -71,6 +72,7 @@ class TwitterReader:
                     lowest_id -= 1
             else:
                 print "something strange happened"
+            print len(tweets_requested)
             return tweets_requested
         except TwythonRateLimitError:
             raise TwitterReaderException
@@ -82,18 +84,18 @@ class TwitterReader:
 
 class TwitterReaderException:
     pass
-'''
+
 consumerKey = 'jf1RuBnCqdQCNmLX0frLg'
 consumerSecret = 'ThqOiemmb6u0unxovHEg9r9m4Lf0MaI30nqh3gwedI'
 accessKey = '1106939719-KyTHxcGncJp0vgxTjH8P2AmaGQ13B5ert7YZR0t'
 accessSecret = 'PqIuAYKTuKFfrg24CAhuwigh5R2udkl2Fls06mTaZLhXZ'
 
-twitter = TwitterReader(consumerKey, consumerSecret, accessKey, accessSecret)
+#twitter = TwitterReader(consumerKey, consumerSecret, accessKey, accessSecret)
 #lookup_user = twitter.lookup_user("KingJames")
 #print lookup_user
 #print twitter.get_application_rate_limit_status()#['/statuses/home_timeline']
-tweets = twitter.get_tweets_from_user("KingJames", 5)
-for tweet in tweets:
-    print tweet['text'], tweet['created_at']
-print len(tweets)
-'''
+#tweets = twitter.get_tweets_from_user("KingJames", 20)
+#print len(tweets)
+#for tweet in tweets:
+#    print tweet['entities']['hashtags']
+#print len(tweets)

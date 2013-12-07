@@ -65,12 +65,13 @@ class SInterface():
             valid = True
         else:
             self.view.username.config(bg='red')
-        #if valid:
-            #try:
-                #tweets=self.tweetReader.get_tweets_from_user(self.view.username.get(),self.view.numTweets.get())
+        if valid:
+            try:
+                tweets=self.tweetReader.get_tweets_from_user(self.view.username.get(),int(self.view.numTweets.get()))
                 #self.tweetsToDB(tweets)
-            #except TwitterReaderException:
-                #self.view.appendText("Rate Limit Exceeded; Please wait 15 minutes.")
+                self.view.appendText(str(len(tweets)))
+            except TwitterReaderException:
+                self.view.appendText("Rate Limit Exceeded; Please wait 15 minutes.")
 
     def listTweets(self):
         #print self.view.numTweets.get()
