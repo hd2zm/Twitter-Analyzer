@@ -85,6 +85,9 @@ class SInterface():
             tweets = self.dbops.getTweets(self.view.numTweets.get(),False)
         else:
             tweets = self.dbops.getTweets(self.view.numTweets.get(),True)
+            if not self.view.numTweets.get()=='' and int(self.view.numTweets.get()) > len(tweets):
+                self.view.appendText("There are only %d tweets in the database" %(len(tweets)))
+                return
         for tweet in tweets:
             self.view.appendText(tweet[2])
             self.view.appendText(tweet[1] + "\n")
@@ -96,7 +99,8 @@ class SInterface():
             hashes = self.getHastagsCount(self.view.numTweets.get())
         hashdict = {}
         hasharray = []
-
+        if hashes == None:
+            return
         for hash in hashes:
             if hash[2].lower() in hashdict:
                 hashdict[hash[2].lower()]= hashdict[hash[2].lower()]+1
@@ -120,6 +124,10 @@ class SInterface():
             refers = self.getRefrenceCount(self.view.numTweets.get())
         refdict = {}
         refarray = []
+
+        if refers == None:
+            return
+
         for refer in refers:
             if refer[2].lower() in refdict:
                 refdict[refer[2].lower()]= refdict[refer[2].lower()]+1
@@ -142,6 +150,9 @@ class SInterface():
 
     def getHastagsCount(self,count):
         tweets = self.dbops.getTweets(count,True)
+        if not self.view.numTweets.get()=='' and int(self.view.numTweets.get()) > len(tweets):
+            self.view.appendText("There are only %d tweets in the database" %(len(tweets)))
+            return
         hashes = self.dbops.getHashtags()
         countedHashes = []
 
@@ -153,6 +164,9 @@ class SInterface():
 
     def getRefrenceCount(self,count):
         tweets = self.dbops.getTweets(count,True)
+        if not self.view.numTweets.get()=='' and int(self.view.numTweets.get()) > len(tweets):
+            self.view.appendText("There are only %d tweets in the database" %(len(tweets)))
+            return
         refers = self.dbops.getReferences()
         countedRefers = []
 
