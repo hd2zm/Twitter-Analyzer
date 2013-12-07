@@ -94,7 +94,7 @@ accessSecret = 'PqIuAYKTuKFfrg24CAhuwigh5R2udkl2Fls06mTaZLhXZ'
 #lookup_user = twitter.lookup_user("KingJames")
 #print lookup_user
 #print twitter.get_application_rate_limit_status()#['/statuses/home_timeline']
-#tweets = twitter.get_tweets_from_user("KingJames", 20)
+#tweets = twitter.get_tweets_from_user("KingJames", 5)
 #print len(tweets)
 #for tweet in tweets:
 #    print tweet['entities']['hashtags']
