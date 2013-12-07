@@ -19,8 +19,8 @@ class ReadOnlyText(Text):
 
 # This module implements a MVC model. This class is the View and contains the UI Stuff
 class View(Frame):
-    def __init__(self, parent, govnah):# govnah = siinterface
-        self.govnah = govnah
+    def __init__(self, parent, controller):# controller = siinterface
+        self.controller = controller
         Frame.__init__(self, parent)
         self.parent = parent
         self.initUI()
@@ -48,10 +48,10 @@ class View(Frame):
         self.username = Entry(self.parent, width=14, bg="white")
         self.username.grid(row=1, column=1, columnspan=2)
 
-        searchUsername = Button(self.parent, text="Verify User", command = self.govnah.verifyUsername)
+        searchUsername = Button(self.parent, text="Verify User", command = self.controller.verifyUsername)
         searchUsername.grid(row = 2, column =0, columnspan = 1)
 
-        searchUsername = Button(self.parent, text="Get Tweets", command = self.govnah.searchUsername)
+        searchUsername = Button(self.parent, text="Get Tweets", command = self.controller.getTweets)
         searchUsername.grid(row = 2, column =2, columnspan = 1)
 
         ntlabel = Label(self.parent, text = "Number of Tweets:")
@@ -75,16 +75,16 @@ class View(Frame):
         self.eDate.grid(row = 5, column = 2)
         self.eDate.insert(END,"MM/DD/YYYY")
 
-        searchUsername = Button(self.parent, text="List Tweets", command = self.govnah.listTweets, width = 20 )
+        searchUsername = Button(self.parent, text="List Tweets", command = self.controller.listTweets, width = 20 )
         searchUsername.grid(row = 6, column =0, columnspan = 3)
 
-        searchUsername = Button(self.parent, text="Most Used Hashtags", command = self.govnah.mostHash, width = 20 )
+        searchUsername = Button(self.parent, text="Most Used Hashtags", command = self.controller.mostHash, width = 20 )
         searchUsername.grid(row = 7, column =0, columnspan = 3)
 
-        searchUsername = Button(self.parent, text="Time graph", command = self.govnah.timeGraph, width = 20 )
+        searchUsername = Button(self.parent, text="Time graph", command = self.controller.timeGraph, width = 20 )
         searchUsername.grid(row = 8, column =0, columnspan = 3)
 
-        searchUsername = Button(self.parent, text="Most Communicated with", command = self.govnah.communicated, width = 20 )
+        searchUsername = Button(self.parent, text="Most Communicated with", command = self.controller.communicated, width = 20 )
         searchUsername.grid(row = 9, column =0, columnspan = 3 )
 
         original = Image.open("twitlogo.png")
